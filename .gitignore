@@ -128,5 +128,14 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# ignore .env file
+.env
 
-.DS_Store/
+# ignore .vscode folder
+.vscode
+
+# ignore .idea folder
+.idea
+
+# ignore DS_Store
+.DS_Store

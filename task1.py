@@ -19,6 +19,7 @@
 # * numpy
 # * nltk
 # * itertools
+# * pandas
 # 
 # ## Introduction
 # You should give a brief information of this assessment task here.
@@ -188,13 +189,48 @@ description = extract_description(full_description)
 extract_description(full_description)
 
 
-# In[ ]:
+# In[13]:
+
+
+# Extract title
+def extract_title(full_description):
+    title = [re.search(r'Title: (.*)', str(i)).group(1) for i in full_description]
+    return title
+
+
+title = extract_title(full_description)
+extract_title(full_description)
+
+
+# In[14]:
+
+
+# Extract Webindex
+def extract_webindex(full_description):
+    webindex = [re.search(r'Webindex: (.*)', str(i)).group(1) for i in full_description]
+    return webindex
+
+webindex = extract_webindex(full_description)
+extract_webindex(full_description)
+
+
+# In[15]:
+
+
+def extract_company(company):
+    company = [re.search(r'Company: (.*)', str(i)).group(1) if re.search(r'Company: (.*)', str(i)) else "NA" for i in company]
+    return company
+company = extract_company(full_description)
+extract_company(full_description)
+
+
+# In[16]:
 
 
 description[emp]
 
 
-# In[ ]:
+# In[17]:
 
 
 def tokenizeDescription(raw_description):
@@ -224,7 +260,7 @@ print("Raw description:\n",description[emp],'\n')
 print("Tokenized description:\n",tk_description[emp])
 
 
-# In[ ]:
+# In[18]:
 
 
 def stats_print(tk_description):
@@ -249,7 +285,7 @@ stats_print(tk_description)
 # In this sub-task, you are required to remove any token that only contains a single character (a token that of length 1).
 # You need to double-check whether it has been done properly
 
-# In[ ]:
+# In[19]:
 
 
 words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
@@ -257,7 +293,7 @@ word_counts = Counter(words) # count the number of times each word appears in th
 print("Number of words that appear only once:", len([w for w in word_counts if word_counts[w] == 1]))
 
 
-# In[ ]:
+# In[20]:
 
 
 st_list = [[w for w in description if len(w) <= 1 ]                       for description in tk_description] # create a list of single character token for each description
@@ -267,7 +303,7 @@ list(chain.from_iterable(st_list)) # merge them together in one list
 tk_description = [[w for w in description if len(w) >=2]                       for description in tk_description]
 
 
-# In[ ]:
+# In[21]:
 
 
 # Remove the top 50 most frequent words
@@ -279,17 +315,11 @@ print("Top 50 most frequent words:\n",top50)
 tk_description = [[w for w in description if w not in top50] for description in tk_description]
 
 
-# In[ ]:
-
-
-print("Tokenized description:\n",tk_description[emp])
-
-
 # ### Task 2.3 Removing Stop words
 # 
 # In this sub-task, you are required to remove the stop words from the tokenized text inside `stopwords_en.txt` file
 
-# In[ ]:
+# In[22]:
 
 
 # remove the stop words inside `stopwords_en.txt` from the tokenized text
@@ -298,13 +328,13 @@ with open('stopwords_en.txt', 'r') as f:
 print("Stop words:\n",stop_words)
 
 
-# In[ ]:
+# In[23]:
 
 
 [w for w in stop_words if ("not" in w or "n't" in w or "no" in w)]
 
 
-# In[ ]:
+# In[24]:
 
 
 # specify
@@ -320,7 +350,7 @@ stats_print(tk_description)
 # Save the vocabulary, bigrams and job advertisment txt as per spectification.
 # - vocab.txt
 
-# In[ ]:
+# In[25]:
 
 
 def save_description(descriptionFilename,tk_description):
@@ -336,19 +366,19 @@ def save_sentiments(sentimentFilename,sentiments):
     out_file.close() # close the file
 
 
-# In[ ]:
+# In[26]:
 
 
 save_description('description.txt',tk_description)
 
 
-# In[ ]:
+# In[27]:
 
 
 save_sentiments('sentiments.txt',sentiments)
 
 
-# In[ ]:
+# In[28]:
 
 
 print(df.data[emp]) # an example of a sentiment txt
@@ -356,25 +386,21 @@ print(tk_description[emp]) # an example of the pre-process sentiment text
 all(df.target==sentiments) # validate whether we save the sentiment properly
 
 
-# In[ ]:
+# In[29]:
 
 
 # code to save output data...
 # Save all job advertisement text and information in txt file
 with open('job_ad.txt', 'w') as f:
     for i in range(len(tk_description)):
-        f.write("Title: " + full_description[i] + "\n")
-        f.write("Company: " + full_description[i] + "\n")
-        f.write("Location: " + full_description[i] + "\n")
-        f.write("Salary: " + full_description[i] + "\n")
-        f.write("Raw Description: " + description[i] + "\n")
+        f.write(full_description[i] + "\n")
         f.write("Tokenized Description: " + str(tk_description[i]) + "\n")
+        f.write("Sentiment: " + str(sentiments[i]) + "\n")
         f.write("\n")
-        print("Successfully write job advertisement " + str(i) + " in txt file")
+    print("Successfully write job advertisement with the tokenized description in txt file")
 
 
-# In[ ]:
-
+# In[30]:
 
 
 def write_vocab(vocab, filename):
@@ -388,7 +414,21 @@ write_vocab(vocab, 'vocab.txt')
 print(vocab[:10])
 
 
-# In[ ]:
+# In[37]:
+
+
+import pandas as pd
+
+# convert job ad to a dataframe
+job_ad = pd.DataFrame({'Title': title, 'Webindex': webindex, 'Company': company, 'Description': description,'Tokenized Description': tk_description, 'sentiment': sentiments})
+# print first 3 rows
+job_ad.head(3)
+# save job ad to csv file
+job_ad.to_csv('job_ad.csv', index=False)
+
+
+
+# In[35]:
 
 
 # The .py format of the jupyter notebook
