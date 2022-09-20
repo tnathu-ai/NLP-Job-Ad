@@ -13,9 +13,12 @@
 # Environment: Python 3 and Jupyter notebook
 # 
 # Libraries used: please include all the libraries you used in your assignment, e.g.,:
-# * pandas
+# * sklearn
+# * collections
 # * re
 # * numpy
+# * nltk
+# * itertools
 # 
 # ## Introduction
 # You should give a brief information of this assessment task here.
@@ -28,13 +31,17 @@
 
 # ## Importing libraries 
 
-# In[42]:
+# In[1]:
 
 
-# Code to import libraries as you need in this assessment, e.g.,
-
+# import libraries
+import numpy as np
 from sklearn.datasets import load_files
 from collections import Counter
+from nltk import RegexpTokenizer
+from nltk.tokenize import sent_tokenize
+from itertools import chain
+import re
 
 
 # ### 1.1 Examining and loading data
@@ -72,61 +79,61 @@ from collections import Counter
 # - Extract webIndex and description into proper data structures.
 # 
 
-# In[43]:
+# In[2]:
 
 
 # load each folder and file inside the data folder
 df = load_files(r"data")
-
-
-# In[44]:
-
-
 # type of the loaded file
 type(df)
 
 
-# In[45]:
+# In[3]:
 
 
 # each folder name is a job category corresponding to the df filenames
 df["filenames"]
 
 
-# In[46]:
+# In[4]:
 
 
 df['target'] # this means the value 0 is negative, the value 1 is positive.
 
 
-# In[47]:
+# In[5]:
 
 
-df['target_names'] 
+# Name of the categories
+df['target_names']
 
 
-# In[48]:
+# In[6]:
 
 
 # test whether it matches, just in case
-emp = 10 # an example, note we will use this example through out this exercise.
+emp = 10 # an example, note we will use this example throughout this exercise.
 df['filenames'][emp], df['target'][emp] # from the file path we know that it's the correct class too
 
 
-# In[49]:
+# In[7]:
 
 
 # assign variables
-description, sentiments = df.data, df.target
+full_description, sentiments = df.data, df.target
 
 
-# In[50]:
+# In[8]:
 
 
-description[emp]
+# the 10th job advertisement description
+full_description[emp]
 
 
-# In[51]:
+# ### ------> OBSERVATION:
+# As we can see the current description is in the **binary** form. Therefore, we need to decode into normal string for further pre-processing
+
+# In[9]:
 
 
 def decode(l):
@@ -135,12 +142,12 @@ def decode(l):
     else:
         return l.decode('utf-8')
 
-description = decode(description)
+full_description = decode(full_description)
 
 
 # 
 
-# In[52]:
+# In[10]:
 
 
 sentiments[emp]
@@ -160,49 +167,34 @@ sentiments[emp]
 
 # stop_words
 
-# ...... Sections and code blocks on basic text pre-processing
-# 
-# 
-# <span style="color: red"> You might have complex notebook structure in this section, please feel free to create your own notebook structure. </span>
+# # Text pre-processing
 
-# In[53]:
+# In[11]:
 
 
-type(description)
+type(full_description)
 
 
-# In[54]:
+# In[12]:
 
 
-# code to perform the task...
 # Extract information from each job advertisement. Perform the following pre-processing steps to the description of each job advertisement
-def extract_description(description):
-    import re
-    description = [re.search(r'\nDescription: (.*)', str(i)).group(1) for i in description]
+def extract_description(full_description):
+    description = [re.search(r'\nDescription: (.*)', str(i)).group(1) for i in full_description]
     return description
 
-extract_description(description)
+
+description = extract_description(full_description)
+extract_description(full_description)
 
 
-# In[55]:
-
-
-description = extract_description(description)
-description
-
-
-# In[56]:
+# In[ ]:
 
 
 description[emp]
 
 
-# In[57]:
-
-
-from nltk import RegexpTokenizer
-from nltk.tokenize import sent_tokenize
-from itertools import chain
+# In[ ]:
 
 
 def tokenizeDescription(raw_description):
@@ -226,11 +218,15 @@ def tokenizeDescription(raw_description):
     tokenised_description = list(chain.from_iterable(token_lists))
     return tokenised_description
 
+tk_description = [tokenizeDescription(r) for r in description]  # list comprehension, generate a list of tokenized articles
 
-# In[58]:
+print("Raw description:\n",description[emp],'\n')
+print("Tokenized description:\n",tk_description[emp])
 
 
-import numpy as np
+# In[ ]:
+
+
 def stats_print(tk_description):
     words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
     vocab = set(words) # compute the vocabulary by converting the list of words/tokens to a set, i.e., giving a set of unique words
@@ -245,19 +241,6 @@ def stats_print(tk_description):
     print("Minimun description length:", np.min(lens))
     print("Standard deviation of description length:", np.std(lens))
 
-
-# In[59]:
-
-
-tk_description = [tokenizeDescription(r) for r in description]  # list comprehension, generate a list of tokenized articles
-
-print("Raw description:\n",description[emp],'\n')
-print("Tokenized description:\n",tk_description[emp])
-
-
-# In[60]:
-
-
 stats_print(tk_description)
 
 
@@ -266,7 +249,7 @@ stats_print(tk_description)
 # In this sub-task, you are required to remove any token that only contains a single character (a token that of length 1).
 # You need to double-check whether it has been done properly
 
-# In[61]:
+# In[ ]:
 
 
 words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
@@ -274,7 +257,7 @@ word_counts = Counter(words) # count the number of times each word appears in th
 print("Number of words that appear only once:", len([w for w in word_counts if word_counts[w] == 1]))
 
 
-# In[62]:
+# In[ ]:
 
 
 st_list = [[w for w in description if len(w) <= 1 ]                       for description in tk_description] # create a list of single character token for each description
@@ -284,11 +267,10 @@ list(chain.from_iterable(st_list)) # merge them together in one list
 tk_description = [[w for w in description if len(w) >=2]                       for description in tk_description]
 
 
-# In[63]:
+# In[ ]:
 
 
 # Remove the top 50 most frequent words
-
 words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
 word_counts = Counter(words) # count the number of times each word appears in the corpus
 top50 = word_counts.most_common(50) # get the top 50 most frequent words
@@ -297,7 +279,7 @@ print("Top 50 most frequent words:\n",top50)
 tk_description = [[w for w in description if w not in top50] for description in tk_description]
 
 
-# In[64]:
+# In[ ]:
 
 
 print("Tokenized description:\n",tk_description[emp])
@@ -307,7 +289,7 @@ print("Tokenized description:\n",tk_description[emp])
 # 
 # In this sub-task, you are required to remove the stop words from the tokenized text inside `stopwords_en.txt` file
 
-# In[65]:
+# In[ ]:
 
 
 # remove the stop words inside `stopwords_en.txt` from the tokenized text
@@ -316,13 +298,13 @@ with open('stopwords_en.txt', 'r') as f:
 print("Stop words:\n",stop_words)
 
 
-# In[66]:
+# In[ ]:
 
 
 [w for w in stop_words if ("not" in w or "n't" in w or "no" in w)]
 
 
-# In[67]:
+# In[ ]:
 
 
 # specify
@@ -338,7 +320,7 @@ stats_print(tk_description)
 # Save the vocabulary, bigrams and job advertisment txt as per spectification.
 # - vocab.txt
 
-# In[73]:
+# In[ ]:
 
 
 def save_description(descriptionFilename,tk_description):
@@ -354,19 +336,19 @@ def save_sentiments(sentimentFilename,sentiments):
     out_file.close() # close the file
 
 
-# In[74]:
+# In[ ]:
 
 
 save_description('description.txt',tk_description)
 
 
-# In[75]:
+# In[ ]:
 
 
 save_sentiments('sentiments.txt',sentiments)
 
 
-# In[76]:
+# In[ ]:
 
 
 print(df.data[emp]) # an example of a sentiment txt
@@ -374,32 +356,39 @@ print(tk_description[emp]) # an example of the pre-process sentiment text
 all(df.target==sentiments) # validate whether we save the sentiment properly
 
 
-# In[77]:
+# In[ ]:
 
 
 # code to save output data...
 # Save all job advertisement text and information in txt file
 with open('job_ad.txt', 'w') as f:
     for i in range(len(tk_description)):
-        # f.write("Title: " + title[i] + "\n")
-        # f.write("Company: " + company[i] + "\n")
-        # f.write("Location: " + location[i] + "\n")
-        # f.write("Salary: " + salary[i] + "\n")
+        f.write("Title: " + full_description[i] + "\n")
+        f.write("Company: " + full_description[i] + "\n")
+        f.write("Location: " + full_description[i] + "\n")
+        f.write("Salary: " + full_description[i] + "\n")
         f.write("Raw Description: " + description[i] + "\n")
         f.write("Tokenized Description: " + str(tk_description[i]) + "\n")
         f.write("\n")
         print("Successfully write job advertisement " + str(i) + " in txt file")
 
 
-# ## Summary
-# Give a short summary and anything you would like to talk about the assessment task here.
+# In[ ]:
 
-# ## Couple of notes for all code blocks in this notebook
-# - please provide proper comment on your code
-# - Please re-start and run all cells to make sure codes are runable and include your output in the submission.   
-# <span style="color: red"> This markdown block can be removed once the task is completed. </span>
 
-# In[69]:
+
+def write_vocab(vocab, filename):
+    with open(filename, 'w') as f:
+        for i, word in enumerate(vocab):
+            f.write(word + ':' + str(i) + '\n')
+# convert tokenized description into a alphabetically sorted list
+vocab = sorted(list(set(chain.from_iterable(tk_description))))
+write_vocab(vocab, 'vocab.txt')
+# print out the first 10 words in the vocabulary
+print(vocab[:10])
+
+
+# In[ ]:
 
 
 # The .py format of the jupyter notebook
@@ -410,8 +399,5 @@ for fname in os.listdir():
         os.system(f'jupyter nbconvert {fname} --to python')
 
 
-# In[69]:
-
-
-
-
+# ## Summary
+# Give a short summary and anything you would like to talk about the assessment task here.
