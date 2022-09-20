@@ -32,15 +32,21 @@
 
 # ## Task 2. Generating Feature Representations for Job Advertisement Descriptions
 
-# ...... Sections and code blocks on buidling different document feature represetations
+# ...... Sections and code blocks on building different document feature represetations
 # 
 # 
 # <span style="color: red"> You might have complex notebook structure in this section, please feel free to create your own notebook structure. </span>
 
 # In[ ]:
 
+"""
+Bag-of-words model:
+Generate the Count vector representation for each job advertisement description, and save
+them into a file (please refer to the required output). Note, the generated Count vector
+representation must be based on the generated vocabulary in Task 1 (as saved in vocab.txt).
+"""
 
-# Code to perform the task...
+
 
 
 # ### Saving outputs

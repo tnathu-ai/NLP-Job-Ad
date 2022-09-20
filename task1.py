@@ -441,3 +441,51 @@ for fname in os.listdir():
 
 # ## Summary
 # Give a short summary and anything you would like to talk about the assessment task here.
+
+# In[ ]:
+# Read job_ad.csv
+job_ad = pd.read_csv('job_ad.csv')
+# print first 3 rows
+job_ad.head(3)
+# get the description of the job ad
+job_ad['Description'].describe()
+# get the tokenized description of the job ad
+job_ad['Tokenized Description'].describe()
+
+"""
+Bag-of-words model:
+Generate the Count vector representation for each job advertisement description, and save
+them into a file (please refer to the required output). Note, the generated Count vector
+representation must be based on the generated vocabulary in Task 1 (as saved in vocab.txt).
+"""
+# bag of words model
+def bag_of_words(description, vocab):
+    # create a list of 0s with the same length as the vocab
+    bow = [0] * len(vocab)
+    # count the number of times each word appears in the description
+    word_counts = Counter(description)
+    # update the bow list with the word counts
+    for word, count in word_counts.items():
+        bow[vocab.index(word)] = count
+    return bow
+
+# Generate the Count vector representation for each job advertisement description
+bow = [bag_of_words(description, vocab) for description in tk_description]
+
+"""
+count_vectors.txt This file stores the sparse count vector representation of job advertisement
+descriptions in the following format. Each line of this file corresponds to one advertisement. It starts
+with a ‘#’ key followed by the webindex of the job advertisement, and a comma ‘,’. The rest of the line
+is the sparse representation of the corresponding description in the form of
+word_integer_index:word_freq separated by comma. Following is an example of the file format (note
+that the following image is artificial and used to demonstrate the required format only, it doesn't
+reflect the values of the actual expected output)
+"""
+# save count vector representation of job advertisement descriptions
+with open('count_vectors.txt', 'w') as f:
+    for i, description in enumerate(tk_description):
+        f.write('#' + str(webindex[i]) + ',')
+        for word in description:
+            f.write(str(vocab.index(word)) + ':' + str(bow[i][vocab.index(word)]) + ',')
+        f.write('\n')
+    print("Successfully write count vector representation of job advertisement descriptions in txt file")
