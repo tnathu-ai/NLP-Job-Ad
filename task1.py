@@ -2,11 +2,13 @@
 # coding: utf-8
 
 # # Assignment 2: Milestone I Natural Language Processing
-# ## Task 1. Basic Text Pre-processing
-# #### Student Name: XXXX XXXX
-# #### Student ID: 000000
 # 
-# Date: XXXX
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Task 1. Basic Text Pre-processing</strong></h3>
+# 
+# #### Student Name: Tran Ngoc Anh Thu
+# #### Student ID: s3879312
+# 
+# Date: "October 2, 2022"
 # 
 # Version: 1.0
 # 
@@ -20,6 +22,16 @@
 # * nltk
 # * itertools
 # * pandas
+# * os
+# 
+# ## Steps
+# 1. Load data
+# 2. Text Pre-processing
+#     * Sentence Segmentation
+#     * Word Tokenization
+#     * Removing Single Character Tokens
+#     * Removing Stop words
+# 3. Saving the Pre-processing Reviews
 # 
 # ## Introduction
 # You should give a brief information of this assessment task here.
@@ -32,20 +44,37 @@
 
 # ## Importing libraries 
 
-# In[1]:
+# In[6]:
 
 
 # import libraries
 import numpy as np
+import pandas as pd
 from sklearn.datasets import load_files
 from collections import Counter
 from nltk import RegexpTokenizer
 from nltk.tokenize import sent_tokenize
 from itertools import chain
 import re
+import os
 
 
-# ### 1.1 Examining and loading data
+# In[11]:
+
+
+# check the version of the main packages
+print("Numpy version: ", np.__version__)
+print("Pandas version: ",pd.__version__)
+get_ipython().system(' python --version')
+
+
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.1 Examining and loading data</strong></h3>
+# 
+# - Examine the data folder, including the categories and job advertisment txt documents, etc. Explain your findings here, e.g., number of folders and format of txt files, etc.
+# - Load the data into proper data structures and get it ready for processing.
+# - Extract webIndex and description into proper data structures.
+# 
+# 
 # 
 # Before doing any pre-processing, we need to load the data into a proper format. 
 # To load the data, you have to explore the data folder. Inside the `data` folder:
@@ -89,11 +118,11 @@ df = load_files(r"data")
 type(df)
 
 
-# In[3]:
+# In[13]:
 
 
-# each folder name is a job category corresponding to the df filenames
-df["filenames"]
+# each file name in the 4 folders corresponding to the df filenames
+## df["filenames"] # Commented it out cause it's too long
 
 
 # In[4]:
@@ -146,8 +175,6 @@ def decode(l):
 full_description = decode(full_description)
 
 
-# 
-
 # In[10]:
 
 
@@ -168,7 +195,7 @@ sentiments[emp]
 
 # stop_words
 
-# # Text pre-processing
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.2 Pre-processing data</strong></h3>
 
 # In[11]:
 
@@ -346,6 +373,16 @@ tk_description = [[w for w in description if w not in ignored_words]            
 stats_print(tk_description)
 
 
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.3 Saving the Pre-processing Job Ads</strong></h3>
+# Save the vocabulary, bigrams and job advertisment txt as per spectification.
+# - vocab.txt
+# 
+# In this very last task, we are going to store all the preprocessed job description texts and its corresponding labels into files.
+# * all the tokenized description are stored in a .txt file named `description.txt`
+#     * each line is a review text, which contained all the tokens of the description text, seperated by a space ' '
+# * all the corresponding labels/sentiments are store in a .txt file named `'sentiments.txt';
+#     * each line is a label (value 0 or 1)
+
 # Saving required outputs
 # Save the vocabulary, bigrams and job advertisment txt as per spectification.
 # - vocab.txt
@@ -366,15 +403,9 @@ def save_sentiments(sentimentFilename,sentiments):
     out_file.close() # close the file
 
 
-# In[26]:
-
-
+# save description into txt file
 save_description('description.txt',tk_description)
-
-
-# In[27]:
-
-
+# save sentiment into txt file
 save_sentiments('sentiments.txt',sentiments)
 
 
@@ -414,26 +445,24 @@ write_vocab(vocab, 'vocab.txt')
 print(vocab[:10])
 
 
-# In[37]:
+# In[1]:
 
-
-import pandas as pd
 
 # convert job ad to a dataframe
-job_ad = pd.DataFrame({'Title': title, 'Webindex': webindex, 'Company': company, 'Description': description,'Tokenized Description': tk_description, 'sentiment': sentiments})
-# print first 3 rows
-job_ad.head(3)
+job_ad = pd.DataFrame({'Title': title, 'Webindex': webindex, 'Company': company, 'Description': description,'Tokenized Description': tk_description, 'Sentiment': sentiments})
+
 # save job ad to csv file
 job_ad.to_csv('job_ad.csv', index=False)
 
+print(job_ad.info())
+# print first 3 rows
+job_ad.head(3)
 
 
-# In[35]:
+# In[38]:
 
 
 # The .py format of the jupyter notebook
-import os
-
 for fname in os.listdir():
     if fname.endswith('ipynb'):
         os.system(f'jupyter nbconvert {fname} --to python')
@@ -441,51 +470,3 @@ for fname in os.listdir():
 
 # ## Summary
 # Give a short summary and anything you would like to talk about the assessment task here.
-
-# In[ ]:
-# Read job_ad.csv
-job_ad = pd.read_csv('job_ad.csv')
-# print first 3 rows
-job_ad.head(3)
-# get the description of the job ad
-job_ad['Description'].describe()
-# get the tokenized description of the job ad
-job_ad['Tokenized Description'].describe()
-
-"""
-Bag-of-words model:
-Generate the Count vector representation for each job advertisement description, and save
-them into a file (please refer to the required output). Note, the generated Count vector
-representation must be based on the generated vocabulary in Task 1 (as saved in vocab.txt).
-"""
-# bag of words model
-def bag_of_words(description, vocab):
-    # create a list of 0s with the same length as the vocab
-    bow = [0] * len(vocab)
-    # count the number of times each word appears in the description
-    word_counts = Counter(description)
-    # update the bow list with the word counts
-    for word, count in word_counts.items():
-        bow[vocab.index(word)] = count
-    return bow
-
-# Generate the Count vector representation for each job advertisement description
-bow = [bag_of_words(description, vocab) for description in tk_description]
-
-"""
-count_vectors.txt This file stores the sparse count vector representation of job advertisement
-descriptions in the following format. Each line of this file corresponds to one advertisement. It starts
-with a ‘#’ key followed by the webindex of the job advertisement, and a comma ‘,’. The rest of the line
-is the sparse representation of the corresponding description in the form of
-word_integer_index:word_freq separated by comma. Following is an example of the file format (note
-that the following image is artificial and used to demonstrate the required format only, it doesn't
-reflect the values of the actual expected output)
-"""
-# save count vector representation of job advertisement descriptions
-with open('count_vectors.txt', 'w') as f:
-    for i, description in enumerate(tk_description):
-        f.write('#' + str(webindex[i]) + ',')
-        for word in description:
-            f.write(str(vocab.index(word)) + ':' + str(bow[i][vocab.index(word)]) + ',')
-        f.write('\n')
-    print("Successfully write count vector representation of job advertisement descriptions in txt file")

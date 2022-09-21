@@ -2,42 +2,83 @@
 # coding: utf-8
 
 # # Assignment 2: Milestone I Natural Language Processing
-# ## Task 2&3
-# #### Student Name: XXXX XXXX
-# #### Student ID: 000000
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Task 2+3</strong></h3>
+# #### Student Name: Tran Ngoc Anh Thu
+# #### Student ID: s3879312
 # 
-# Date: XXXX
+# Date: "October 2, 2022"
 # 
 # Version: 1.0
 # 
 # Environment: Python 3 and Jupyter notebook
 # 
 # Libraries used: please include all the libraries you used in your assignment, e.g.,:
-# * pandas
+# * sklearn
+# * collections
 # * re
 # * numpy
+# * nltk
+# * itertools
+# * pandas
+# * os
+# 
+# ## Steps
+# 1. Load data
+# 2. Text Pre-processing
+#     * Sentence Segmentation
+#     * Word Tokenization
+#     * Removing Single Character Tokens
+#     * Removing Stop words
+# 3. Saving the Pre-processing Reviews
 # 
 # ## Introduction
 # You should give a brief information of this assessment task here.
 # 
 # <span style="color: red"> Note that this is a sample notebook only. You will need to fill in the proper markdown and code blocks. You might also want to make necessary changes to the structure to meet your own needs. Note also that any generic comments written in this notebook are to be removed and replace with your own words.</span>
+# 
+# ## Dataset
+# 
+# + This is a small collection of job advertisement documents (around 750 jobs).
+# 
+# The loaded the pre-processed `job_ad.csv` file, with the following attributes:
+# 
+# | **ATTRIBUTES**   | **DESCRIPTION**                                           |
+# |--------------|---------------------------------------------------------------|
+# | Webindex     | 8 digit Id of the job advertisement on the website            |
+# | Title        | Title of the advertised job position                          |
+# | Company      | Company (employer) of the advertised job position             |
+# | Description  | the description of each job advertisement                     |
+# | Toekenized Description  | the tokenized description of each job advertisement                     |
+# | Sentimens  | the sentiment of each job advertisement                     |
 
 # ## Importing libraries 
 
-# In[1]:
+# In[7]:
 
+
+from itertools import chain
+import pandas as pd
 
 # Code to import libraries as you need in this assessment, e.g.,
+# Read job_ad.csv
+job_ad = pd.read_csv('job_ad.csv')
+# print first 3 rows
+job_ad.head(3)
+# get the description of the job ad
+description = job_ad['Description']
+# get the tokenized description of the job ad
+tk_description = job_ad['Tokenized Description']
+webindex = job_ad['Webindex']
+vocab = sorted(list(set(chain.from_iterable(tk_description))))
 
 
-# ## Task 2. Generating Feature Representations for Job Advertisement Descriptions
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Task 2. Generating Feature Representations for Job Advertisement Descriptions</strong></h3>
 
-# ...... Sections and code blocks on building different document feature represetations
-# 
-# 
-# <span style="color: red"> You might have complex notebook structure in this section, please feel free to create your own notebook structure. </span>
+# In[8]:
 
-# In[ ]:
+
+from collections import Counter
+
 
 """
 Bag-of-words model:
@@ -45,18 +86,52 @@ Generate the Count vector representation for each job advertisement description,
 them into a file (please refer to the required output). Note, the generated Count vector
 representation must be based on the generated vocabulary in Task 1 (as saved in vocab.txt).
 """
+# bag of words model
+def bag_of_words(description, vocab):
+    # create a list of 0s with the same length as the vocab
+    bow = [0] * len(vocab)
+    # count the number of times each word appears in the description
+    word_counts = Counter(description)
+    # update the bow list with the word counts
+    for word, count in word_counts.items():
+        bow[vocab.index(word)] = count
+    return bow
+
+# Generate the Count vector representation for each job advertisement description
+bow = [bag_of_words(description, vocab) for description in tk_description]
 
 
+# In[9]:
 
 
-# ### Saving outputs
+bow
+
+
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>2.1 Saving outputs</strong></h3>
+# 
 # Save the count vector representation as per spectification.
-# - count_vectors.txt
+# - `count_vectors.txt`
 
-# In[2]:
+# In[10]:
 
 
-# code to save output data...
+"""
+count_vectors.txt This file stores the sparse count vector representation of job advertisement
+descriptions in the following format. Each line of this file corresponds to one advertisement. It starts
+with a ‘#’ key followed by the webindex of the job advertisement, and a comma ‘,’. The rest of the line
+is the sparse representation of the corresponding description in the form of
+word_integer_index:word_freq separated by comma. Following is an example of the file format (note
+that the following image is artificial and used to demonstrate the required format only, it doesn't
+reflect the values of the actual expected output)
+"""
+# save count vector representation of job advertisement descriptions
+with open('count_vectors.txt', 'w') as f:
+    for i, description in enumerate(tk_description):
+        f.write('#' + str(webindex[i]) + ',')
+        for word in description:
+            f.write(str(vocab.index(word)) + ':' + str(bow[i][vocab.index(word)]) + ',')
+        f.write('\n')
+    print("Successfully write count vector representation of job advertisement descriptions into count_vectors.txt file")
 
 
 # ## Task 3. Job Advertisement Classification
