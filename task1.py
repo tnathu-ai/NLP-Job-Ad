@@ -34,9 +34,8 @@
 # 3. Saving the Pre-processing Reviews
 # 
 # ## Introduction
-# You should give a brief information of this assessment task here.
-# 
-# <span style="color: red"> Note that this is a sample notebook only. You will need to fill in the proper markdown and code blocks. You might also want to make necessary changes to the structure to meet your own needs. Note also that any generic comments written in this notebook are to be removed and replace with your own words.</span>
+# Nowadays there are many job hunting websites including seek.com.au and au.indeed.com. These job hunting sites all manage a job search system, where job hunters could search for relevant jobs based on keywords, salary, and categories. In previous years, the category of an advertised job was often manually entered by the advertiser (e.g., the employer). There were mistakes made for category assignment. As a result, the jobs in the wrong class did not get enough exposure to relevant candidate groups.
+# With advances in text analysis, automated job classification has become feasible; and sensible suggestions for job categories can then be made to potential advertisers. This can help reduce human data entry error, increase the job exposure to relevant candidates, and also improve the user experience of the job hunting site. In order to do so, we need an automated job ads classification system that helps to predict the categories of newly entered job advertisements.
 # 
 # ## Dataset
 # 
@@ -44,7 +43,7 @@
 
 # ## Importing libraries 
 
-# In[6]:
+# In[1]:
 
 
 # import libraries
@@ -59,7 +58,7 @@ import re
 import os
 
 
-# In[11]:
+# In[2]:
 
 
 # check the version of the main packages
@@ -109,7 +108,7 @@ get_ipython().system(' python --version')
 # - Extract webIndex and description into proper data structures.
 # 
 
-# In[2]:
+# In[3]:
 
 
 # load each folder and file inside the data folder
@@ -118,27 +117,29 @@ df = load_files(r"data")
 type(df)
 
 
-# In[13]:
-
-
-# each file name in the 4 folders corresponding to the df filenames
-## df["filenames"] # Commented it out cause it's too long
-
-
 # In[4]:
 
 
-df['target'] # this means the value 0 is negative, the value 1 is positive.
+df['target'] # this corresponding to the index value of the 4 categories
 
 
 # In[5]:
 
 
 # Name of the categories
-df['target_names']
+df['target_names'] # this corresponding to the name value of the 4 categories
 
 
 # In[6]:
+
+
+print(f'Category at index 0: {df["target_names"][0]}')
+print(f'Category at index 1: {df["target_names"][1]}')
+print(f'Category at index 2: {df["target_names"][2]}')
+print(f'Category at index 3: {df["target_names"][3]}')
+
+
+# In[7]:
 
 
 # test whether it matches, just in case
@@ -146,14 +147,14 @@ emp = 10 # an example, note we will use this example throughout this exercise.
 df['filenames'][emp], df['target'][emp] # from the file path we know that it's the correct class too
 
 
-# In[7]:
+# In[8]:
 
 
 # assign variables
-full_description, sentiments = df.data, df.target
+full_description, category = df.data, df.target
 
 
-# In[8]:
+# In[9]:
 
 
 # the 10th job advertisement description
@@ -163,7 +164,7 @@ full_description[emp]
 # ### ------> OBSERVATION:
 # As we can see the current description is in the **binary** form. Therefore, we need to decode into normal string for further pre-processing
 
-# In[9]:
+# In[10]:
 
 
 def decode(l):
@@ -173,12 +174,6 @@ def decode(l):
         return l.decode('utf-8')
 
 full_description = decode(full_description)
-
-
-# In[10]:
-
-
-sentiments[emp]
 
 
 # ### ---------------> OBSERVATION:
@@ -287,6 +282,16 @@ print("Raw description:\n",description[emp],'\n')
 print("Tokenized description:\n",tk_description[emp])
 
 
+# #### A Few Statistics Before Any Further Pre-processing
+# 
+# In the following, we are interested to know a few statistics at this very begining stage, including:
+# * The total number of tokens across the corpus
+# * The total number of types across the corpus, i.e. the size of vocabulary 
+# * The so-called, [lexical diversity](https://en.wikipedia.org/wiki/Lexical_diversity), referring to the ratio of different unique word stems (types) to the total number of words (tokens).  
+# * The average, minimum and maximum number of token (i.e. document length) in the dataset.
+# 
+# In the following, we wrap all these up as a function, since we will use this printing module later to compare these statistic values before and after pre-processing.
+
 # In[18]:
 
 
@@ -361,6 +366,11 @@ print("Stop words:\n",stop_words)
 [w for w in stop_words if ("not" in w or "n't" in w or "no" in w)]
 
 
+# #### The Updated Statistics
+# 
+# In the above, we have done a few pre-processed steps, now let's have a look at the statistics again:
+# 
+
 # In[24]:
 
 
@@ -373,15 +383,29 @@ tk_description = [[w for w in description if w not in ignored_words]            
 stats_print(tk_description)
 
 
-# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.3 Saving the Pre-processing Job Ads</strong></h3>
-# Save the vocabulary, bigrams and job advertisment txt as per spectification.
-# - vocab.txt
+# Recall, from the beginning, we have the following:  
+# _____________________________________________
 # 
-# In this very last task, we are going to store all the preprocessed job description texts and its corresponding labels into files.
-# * all the tokenized description are stored in a .txt file named `description.txt`
-#     * each line is a review text, which contained all the tokens of the description text, seperated by a space ' '
-# * all the corresponding labels/sentiments are store in a .txt file named `'sentiments.txt';
-#     * each line is a label (value 0 or 1)
+# Vocabulary size:  9423
+# 
+# Total number of tokens:  107751
+# 
+# Lexical diversity:  0.08745162457889022
+# 
+# Total number of description: 776
+# 
+# Average description length: 138.85438144329896
+# 
+# Maximun description length: 489
+# 
+# Minimun description length: 12
+# 
+# Standard deviation of description length: 73.42099464751045
+# _____________________________________________
+# 
+# We've shrunk more than 40% of the vocabulary.
+
+# category
 
 # Saving required outputs
 # Save the vocabulary, bigrams and job advertisment txt as per spectification.
@@ -396,42 +420,42 @@ def save_description(descriptionFilename,tk_description):
     out_file.write(string)
     out_file.close() # close the file
 
-def save_sentiments(sentimentFilename,sentiments):
-    out_file = open(sentimentFilename, 'w') # creates a txt file and open to save sentiments
-    string = "\n".join([str(s) for s in sentiments])
+def save_sentiments(sentimentFilename,category):
+    out_file = open(sentimentFilename, 'w') # creates a txt file and open to save category
+    string = "\n".join([str(s) for s in category])
     out_file.write(string)
     out_file.close() # close the file
 
 
 # save description into txt file
 save_description('description.txt',tk_description)
-# save sentiment into txt file
-save_sentiments('sentiments.txt',sentiments)
+# save Category into txt file
+save_sentiments('category.txt',category)
 
 
-# In[28]:
+# In[ ]:
 
 
-print(df.data[emp]) # an example of a sentiment txt
-print(tk_description[emp]) # an example of the pre-process sentiment text
-all(df.target==sentiments) # validate whether we save the sentiment properly
+print(df.data[emp]) # an example of a Category txt
+print(tk_description[emp]) # an example of the pre-process Category text
 
 
-# In[29]:
+# In[ ]:
 
 
 # code to save output data...
 # Save all job advertisement text and information in txt file
 with open('job_ad.txt', 'w') as f:
+    f.write("Category: " + str(category) + "\n")
     for i in range(len(tk_description)):
         f.write(full_description[i] + "\n")
         f.write("Tokenized Description: " + str(tk_description[i]) + "\n")
-        f.write("Sentiment: " + str(sentiments[i]) + "\n")
+        f.write("Category: " + str(df['target'][i]) + "\n")
         f.write("\n")
     print("Successfully write job advertisement with the tokenized description in txt file")
 
 
-# In[30]:
+# In[ ]:
 
 
 def write_vocab(vocab, filename):
@@ -445,11 +469,27 @@ write_vocab(vocab, 'vocab.txt')
 print(vocab[:10])
 
 
-# In[1]:
+# In[ ]:
+
+
+category
+
+
+# In[ ]:
 
 
 # convert job ad to a dataframe
-job_ad = pd.DataFrame({'Title': title, 'Webindex': webindex, 'Company': company, 'Description': description,'Tokenized Description': tk_description, 'Sentiment': sentiments})
+job_ad = pd.DataFrame({'Title': title, 'Webindex': webindex, 'Company': company, 'Description': description,'Tokenized Description': tk_description, 'Category': category})
+
+# change Tokenized Description to string separated by space
+job_ad['Tokenized Description'] = job_ad['Tokenized Description'].apply(lambda x: ' '.join([str(i) for i in x]))
+
+# rename the value of category column
+# Category at index 0: Accounting_Finance
+# Category at index 1: Engineering
+# Category at index 2: Healthcare_Nursing
+# Category at index 3: Sales
+df['Category'] = df['Category'].replace([0,1,2,3],['Accounting_Finance','Engineering','Healthcare_Nursing','Sales'])
 
 # save job ad to csv file
 job_ad.to_csv('job_ad.csv', index=False)
@@ -459,7 +499,7 @@ print(job_ad.info())
 job_ad.head(3)
 
 
-# In[38]:
+# In[ ]:
 
 
 # The .py format of the jupyter notebook
@@ -470,3 +510,9 @@ for fname in os.listdir():
 
 # ## Summary
 # Give a short summary and anything you would like to talk about the assessment task here.
+
+# In[ ]:
+
+
+
+

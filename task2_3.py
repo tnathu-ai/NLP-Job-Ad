@@ -2,7 +2,8 @@
 # coding: utf-8
 
 # # Assignment 2: Milestone I Natural Language Processing
-# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Task 2+3</strong></h3>
+# <h3 style="color:#ffc0cb;font-size:40px;font-family:Georgia;text-align:center;"><strong>Task 2: Generate Feature Representation <br> Task 3: Classification</strong></h3>
+# 
 # #### Student Name: Tran Ngoc Anh Thu
 # #### Student ID: s3879312
 # 
@@ -40,6 +41,9 @@
 # 
 # + This is a small collection of job advertisement documents (around 750 jobs).
 # 
+# * Consists of 776 documents corresponding to stories in five topical areas during 2004-2005.
+# * Class labels: 4 (Accountin)
+# 
 # The loaded the pre-processed `job_ad.csv` file, with the following attributes:
 # 
 # | **ATTRIBUTES**   | **DESCRIPTION**                                           |
@@ -50,10 +54,11 @@
 # | Description  | the description of each job advertisement                     |
 # | Toekenized Description  | the tokenized description of each job advertisement                     |
 # | Sentimens  | the sentiment of each job advertisement                     |
+# | Catrgory  | 'Accounting_Finance', 'Engineering', 'Healthcare_Nursing', 'Sales'                   |
 
 # ## Importing libraries 
 
-# In[7]:
+# In[1]:
 
 
 from itertools import chain
@@ -70,9 +75,17 @@ description = job_ad['Description']
 tk_description = job_ad['Tokenized Description']
 webindex = job_ad['Webindex']
 vocab = sorted(list(set(chain.from_iterable(tk_description))))
+print(tk_description)
+len(vocab)
 
 
-# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Task 2. Generating Feature Representations for Job Advertisement Descriptions</strong></h3>
+# In[4]:
+
+
+type(tk_description[0])
+
+
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Task 2. Generating Feature Representations</strong></h3>
 
 # In[8]:
 
@@ -111,19 +124,12 @@ bow
 # 
 # Save the count vector representation as per spectification.
 # - `count_vectors.txt`
+# 
+# `count_vectors.txt` stores the sparse count vector representation of job advertisement descriptions in the following format. Each line of this file corresponds to one advertisement. It starts with a ‘#’ key followed by the webindex of the job advertisement, and a comma ‘,’. The rest of the line is the sparse representation of the corresponding description in the form of word_integer_index:word_freq separated by comma. Following is an example of the file format.
 
 # In[10]:
 
 
-"""
-count_vectors.txt This file stores the sparse count vector representation of job advertisement
-descriptions in the following format. Each line of this file corresponds to one advertisement. It starts
-with a ‘#’ key followed by the webindex of the job advertisement, and a comma ‘,’. The rest of the line
-is the sparse representation of the corresponding description in the form of
-word_integer_index:word_freq separated by comma. Following is an example of the file format (note
-that the following image is artificial and used to demonstrate the required format only, it doesn't
-reflect the values of the actual expected output)
-"""
 # save count vector representation of job advertisement descriptions
 with open('count_vectors.txt', 'w') as f:
     for i, description in enumerate(tk_description):
@@ -134,7 +140,7 @@ with open('count_vectors.txt', 'w') as f:
     print("Successfully write count vector representation of job advertisement descriptions into count_vectors.txt file")
 
 
-# ## Task 3. Job Advertisement Classification
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Task 3. Job Advertisement Classification</strong></h3>
 
 # ...... Sections and code blocks on buidling classification models based on different document feature represetations. 
 # Detailed comparsions and evaluations on different models to answer each question as per specification. 
