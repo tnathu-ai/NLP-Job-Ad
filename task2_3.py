@@ -74,7 +74,8 @@ description = job_ad['Description']
 # get the tokenized description of the job ad
 tk_description = job_ad['Tokenized Description']
 webindex = job_ad['Webindex']
-vocab = sorted(list(set(chain.from_iterable(tk_description))))
+# vocab is a list of unique words in the corpus separated by space
+vocab = list(set(chain.from_iterable(tk_description)))
 print(tk_description)
 len(vocab)
 

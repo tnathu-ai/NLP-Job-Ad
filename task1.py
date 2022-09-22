@@ -491,6 +491,9 @@ job_ad['Tokenized Description'] = job_ad['Tokenized Description'].apply(lambda x
 # Category at index 3: Sales
 df['Category'] = df['Category'].replace([0,1,2,3],['Accounting_Finance','Engineering','Healthcare_Nursing','Sales'])
 
+# Cast Webindex to int
+job_ad['Webindex'] = job_ad['Webindex'].astype(int)
+
 # save job ad to csv file
 job_ad.to_csv('job_ad.csv', index=False)
 
