@@ -33,9 +33,11 @@
 # 3. Saving the Pre-processing Reviews
 # 
 # ## Introduction
-# You should give a brief information of this assessment task here.
+# In task 1, we have done some basic pre-processing on the job ad descriiption. We have saved the preprocessed data into two files:
+# * `description.txt`: each line is a tokenized description, which contained all the tokens of the description text, separated by a space ' '
+# * `category.txt`: eeach line is a label (one of these 4 values: 0,1,2,3), corresponds to the review text in the same order as in `description.txt`
 # 
-# <span style="color: red"> Note that this is a sample notebook only. You will need to fill in the proper markdown and code blocks. You might also want to make necessary changes to the structure to meet your own needs. Note also that any generic comments written in this notebook are to be removed and replace with your own words.</span>
+# We are going to load the pre-processed data from task 1, generate different vector representations of reviews and will build machine learning models for label classification.
 # 
 # ## Dataset
 # 
@@ -58,7 +60,7 @@
 
 # ## Importing libraries 
 
-# In[1]:
+# In[2]:
 
 
 from itertools import chain
@@ -74,9 +76,17 @@ description = job_ad['Description']
 # get the tokenized description of the job ad
 tk_description = job_ad['Tokenized Description']
 webindex = job_ad['Webindex']
-# vocab is a list of unique words in the corpus separated by space
-vocab = list(set(chain.from_iterable(tk_description)))
+vocab = sorted(list(chain.from_iterable(tk_description)))
 print(tk_description)
+len(vocab)
+
+
+# In[3]:
+
+
+words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
+vocab = sorted(list(set(words))) # compute the vocabulary by converting the list of words/tokens to a set, i.e., giving a set of unique words
+
 len(vocab)
 
 
@@ -87,8 +97,10 @@ type(tk_description[0])
 
 
 # <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Task 2. Generating Feature Representations</strong></h3>
+# 
+# So let's say we do binary feature representation but with 3 types of data, the title, the description, and title+description.
 
-# In[8]:
+# In[5]:
 
 
 from collections import Counter
@@ -115,10 +127,26 @@ def bag_of_words(description, vocab):
 bow = [bag_of_words(description, vocab) for description in tk_description]
 
 
-# In[9]:
+# In[6]:
 
 
 bow
+
+
+# # TFIDF
+# The whole tfidf will be the weight. So it includes the term frequency of the token in the doc, as well the IDF of the term (same for the term in the whole document, as it measures how many docs contain the term).
+# 
+# A small detail to pay attention to, if you take a look at the `gen_docVecs` function, it first turn the list of tokens of an article to a set, so you only do a weighted sum of all distinct tokens in the docs, and thus needs the tfidf weight as then it includes the term frequence and idf.
+
+# In[7]:
+
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+import seaborn as sns
+
+tfidf_vectorizer = TfidfVectorizer()
+tfidf = tfidf_vectorizer.fit_transform(words).toarray()
+sns.heatmap(tfidf, annot=True, cbar = False, xticklabels = vocab)
 
 
 # <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>2.1 Saving outputs</strong></h3>
@@ -154,7 +182,18 @@ with open('count_vectors.txt', 'w') as f:
 # Code to perform the task...
 
 
-# ## Summary
+# In[1]:
+
+
+import os
+
+# The .py format of the jupyter notebook
+for fname in os.listdir():
+    if fname.endswith('ipynb'):
+        os.system(f'jupyter nbconvert {fname} --to python')
+
+
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Summary</strong></h3>
 # Give a short summary and anything you would like to talk about the assessment tasks here.
 
 # ## Couple of notes for all code blocks in this notebook

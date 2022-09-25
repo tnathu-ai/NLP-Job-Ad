@@ -37,9 +37,16 @@
 # Nowadays there are many job hunting websites including seek.com.au and au.indeed.com. These job hunting sites all manage a job search system, where job hunters could search for relevant jobs based on keywords, salary, and categories. In previous years, the category of an advertised job was often manually entered by the advertiser (e.g., the employer). There were mistakes made for category assignment. As a result, the jobs in the wrong class did not get enough exposure to relevant candidate groups.
 # With advances in text analysis, automated job classification has become feasible; and sensible suggestions for job categories can then be made to potential advertisers. This can help reduce human data entry error, increase the job exposure to relevant candidates, and also improve the user experience of the job hunting site. In order to do so, we need an automated job ads classification system that helps to predict the categories of newly entered job advertisements.
 # 
-# ## Dataset
+# In this **task1** notebook, we are going to explore a job advertisement data set, and focus on pre-processing the description only.
+# In the next task **task2_3**, we will then use the pre-processed text reviews to generate data features and build classification models to predict label of the description.
 # 
-# + This is a small collection of job advertisement documents (around 750 jobs).
+# ## Dataset
+# + A small collection of job advertisement documents (around 776 jobs) inside the `data` folder.
+# + Inside the data folder, there are four different sub-folders: Accounting_Finance, Engineering, Healthcare_Nursing, and Sales, representing a job category.
+# + The job advertisement text documents of a particular category are in the corresponding sub-folder.
+# + Each job advertisement document is a txt file named `Job_<ID>.txt`. It contains the title, the webindex (some will also have information on the company name, some might not), and the full description of the job advertisement.
+# 
+# 
 
 # ## Importing libraries 
 
@@ -162,7 +169,10 @@ full_description[emp]
 
 
 # ### ------> OBSERVATION:
-# As we can see the current description is in the **binary** form. Therefore, we need to decode into normal string for further pre-processing
+# As we can see the current description is in the **binary** form and read as a byte object (a `b` in front of each review text if you print it out). Therefore, we need to decode into normal string for further pre-processing
+# 
+# However, the tokenizer cannot apply a string pattern on a bytes-like object. To resolve this, we decode each read `full_description` text using `utf-8` by writing a decode function
+# 
 
 # In[10]:
 
@@ -177,20 +187,32 @@ full_description = decode(full_description)
 
 
 # ### ---------------> OBSERVATION:
-# The current `description` contains:
+# The current `description` contains these attributes:
 # 
-# | **ATTRIBUTES**   | **DESCRIPTION**                                           |
-# |--------------|---------------------------------------------------------------|
-# | Webindex     | 8 digit Id of the job advertisement on the website            |
-# | Title        | Title of the advertised job position                          |
-# | Company      | Company (employer) of the advertised job position             |
-# | Description  | the description of each job advertisement                     |
+# | **ATTRIBUTES**   | **MEANING**                                        |
+# |--------------|----------------------------------------------------|
+# | Webindex     | 8 digit Id of the job advertisement on the website |
+# | Title        | Title of the advertised job position               |
+# | Company      | Company (employer) of the advertised job position  |
+# | Description  | the description of each job advertisement          |
 # 
-# and I only want the description itself to perform text-preprocessing and NLP on it. Therefore, I will perform the following pre-processing steps to the description of each job advertisement;
-
-# stop_words
+# and I only want the description itself to perform text-preprocessing and NLP on `description`. Therefore, I will perform the following pre-processing steps to the description of each job advertisement;
 
 # <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.2 Pre-processing data</strong></h3>
+# 
+# 1. Extract information from each job advertisement. Perform the following pre-processing steps to the description of each job advertisement;
+# 2. Tokenize each job advertisement description. The word tokenization must use the following regular expression, r"[a-zA-Z]+(?:[-'][a-zA-Z]+)?";
+# 3. All the words must be converted into the lower case;
+# 4. Remove words with length less than 2.
+# 5. Remove stopwords using the provided stop words list (i.e, stopwords_en.txt). It is located inside the
+# same downloaded folder.
+# 6. Remove the word that appears only once in the document collection, based on term frequency.
+# 7. Remove the top 50 most frequent words based on document frequency.
+# 8. Save all job advertisement text and information in txt file(s) (you have flexibility to choose what format
+# you want to save the preprocessed job ads, and you will need to retrieve the pre-processed job ads
+# text in Task 2 & 3);
+# 9. Build a vocabulary of the cleaned job advertisement descriptions, save it in a txt file (please refer to the
+# required output);
 
 # In[11]:
 
@@ -407,9 +429,14 @@ stats_print(tk_description)
 
 # category
 
-# Saving required outputs
+# ## Saving required outputs
 # Save the vocabulary, bigrams and job advertisment txt as per spectification.
-# - vocab.txt
+# 
+# We are going to store all the preprocessed description texts and its corresponding labels into files for task 2.
+# * all the tokenized description are stored in a .txt file named `description.txt`
+#     * each line is a description text, which contained all the tokens of the description text, separated by a space ' '
+# * all the corresponding labels are store in a .txt file named `category.txt`
+#     * each line is a label (one of these 4 values: 0,1,2,3)
 
 # In[25]:
 
@@ -428,22 +455,22 @@ def save_sentiments(sentimentFilename,category):
 
 
 # save description into txt file
-save_description('description.txt',tk_description)
+descriptionFilename = "description.txt"
+save_description(descriptionFilename,tk_description)
+print(f'Successfully saved description into {descriptionFilename}')
+
+categoryFilename = "category.txt"
 # save Category into txt file
-save_sentiments('category.txt',category)
+save_sentiments(categoryFilename,category)
+print(f'Successfully saved category into {categoryFilename}')
 
 
-# In[ ]:
+# `vocab.txt`
+# This file contains the unigram vocabulary, one each line, in the following format: word_string:word_integer_index. Very importantly, words in the vocabulary must be sorted in alphabetical order, and the index value starts from 0. This file is the key to interpret the sparse encoding. For instance, in the following example, the word aaron is the 20th word (the corresponding integer_index as 19) in the vocabulary (note that the index values and words in the following image are artificial and used to demonstrate the required format only, it doesn't reflect the values of the actual expected output).
+
+# In[26]:
 
 
-print(df.data[emp]) # an example of a Category txt
-print(tk_description[emp]) # an example of the pre-process Category text
-
-
-# In[ ]:
-
-
-# code to save output data...
 # Save all job advertisement text and information in txt file
 with open('job_ad.txt', 'w') as f:
     f.write("Category: " + str(category) + "\n")
@@ -455,7 +482,7 @@ with open('job_ad.txt', 'w') as f:
     print("Successfully write job advertisement with the tokenized description in txt file")
 
 
-# In[ ]:
+# In[27]:
 
 
 def write_vocab(vocab, filename):
@@ -469,13 +496,16 @@ write_vocab(vocab, 'vocab.txt')
 print(vocab[:10])
 
 
-# In[ ]:
+# In[28]:
 
 
-category
+print(f'Category at index 0: {df["target_names"][0]}')
+print(f'Category at index 1: {df["target_names"][1]}')
+print(f'Category at index 2: {df["target_names"][2]}')
+print(f'Category at index 3: {df["target_names"][3]}')
 
 
-# In[ ]:
+# In[29]:
 
 
 # convert job ad to a dataframe
@@ -484,12 +514,13 @@ job_ad = pd.DataFrame({'Title': title, 'Webindex': webindex, 'Company': company,
 # change Tokenized Description to string separated by space
 job_ad['Tokenized Description'] = job_ad['Tokenized Description'].apply(lambda x: ' '.join([str(i) for i in x]))
 
-# rename the value of category column
+
+# replace the value in Category column
 # Category at index 0: Accounting_Finance
 # Category at index 1: Engineering
 # Category at index 2: Healthcare_Nursing
 # Category at index 3: Sales
-df['Category'] = df['Category'].replace([0,1,2,3],['Accounting_Finance','Engineering','Healthcare_Nursing','Sales'])
+job_ad['Category'] = job_ad['Category'].replace([0,1,2,3],['Accounting_Finance','Engineering','Healthcare_Nursing','Sales'])
 
 # Cast Webindex to int
 job_ad['Webindex'] = job_ad['Webindex'].astype(int)
@@ -502,7 +533,7 @@ print(job_ad.info())
 job_ad.head(3)
 
 
-# In[ ]:
+# In[30]:
 
 
 # The .py format of the jupyter notebook
@@ -513,6 +544,8 @@ for fname in os.listdir():
 
 # ## Summary
 # Give a short summary and anything you would like to talk about the assessment task here.
+
+# # Reference
 
 # In[ ]:
 
