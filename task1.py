@@ -50,7 +50,7 @@
 
 # ## Importing libraries 
 
-# In[1]:
+# In[ ]:
 
 
 # import libraries
@@ -65,7 +65,7 @@ import re
 import os
 
 
-# In[2]:
+# In[ ]:
 
 
 # check the version of the main packages
@@ -115,7 +115,7 @@ get_ipython().system(' python --version')
 # - Extract webIndex and description into proper data structures.
 # 
 
-# In[3]:
+# In[ ]:
 
 
 # load each folder and file inside the data folder
@@ -124,20 +124,20 @@ df = load_files(r"data")
 type(df)
 
 
-# In[4]:
+# In[ ]:
 
 
 df['target'] # this corresponding to the index value of the 4 categories
 
 
-# In[5]:
+# In[ ]:
 
 
 # Name of the categories
 df['target_names'] # this corresponding to the name value of the 4 categories
 
 
-# In[6]:
+# In[ ]:
 
 
 print(f'Category at index 0: {df["target_names"][0]}')
@@ -146,7 +146,7 @@ print(f'Category at index 2: {df["target_names"][2]}')
 print(f'Category at index 3: {df["target_names"][3]}')
 
 
-# In[7]:
+# In[ ]:
 
 
 # test whether it matches, just in case
@@ -154,14 +154,14 @@ emp = 10 # an example, note we will use this example throughout this exercise.
 df['filenames'][emp], df['target'][emp] # from the file path we know that it's the correct class too
 
 
-# In[8]:
+# In[ ]:
 
 
 # assign variables
 full_description, category = df.data, df.target
 
 
-# In[9]:
+# In[ ]:
 
 
 # the 10th job advertisement description
@@ -174,7 +174,7 @@ full_description[emp]
 # However, the tokenizer cannot apply a string pattern on a bytes-like object. To resolve this, we decode each read `full_description` text using `utf-8` by writing a decode function
 # 
 
-# In[10]:
+# In[ ]:
 
 
 def decode(l):
@@ -183,7 +183,9 @@ def decode(l):
     else:
         return l.decode('utf-8')
 
+# decode the binary description into utf-8 form and save it to full_description
 full_description = decode(full_description)
+type(full_description)
 
 
 # ### ---------------> OBSERVATION:
@@ -214,40 +216,21 @@ full_description = decode(full_description)
 # 9. Build a vocabulary of the cleaned job advertisement descriptions, save it in a txt file (please refer to the
 # required output);
 
-# In[11]:
+# In[ ]:
 
 
-type(full_description)
+# Extract description, title, webindex,  from each job advertisement. 
 
-
-# In[12]:
-
-
-# Extract information from each job advertisement. Perform the following pre-processing steps to the description of each job advertisement
 def extract_description(full_description):
     description = [re.search(r'\nDescription: (.*)', str(i)).group(1) for i in full_description]
     return description
-
-
 description = extract_description(full_description)
-extract_description(full_description)
-
-
-# In[13]:
-
 
 # Extract title
 def extract_title(full_description):
     title = [re.search(r'Title: (.*)', str(i)).group(1) for i in full_description]
     return title
-
-
 title = extract_title(full_description)
-extract_title(full_description)
-
-
-# In[14]:
-
 
 # Extract Webindex
 def extract_webindex(full_description):
@@ -255,26 +238,21 @@ def extract_webindex(full_description):
     return webindex
 
 webindex = extract_webindex(full_description)
-extract_webindex(full_description)
 
-
-# In[15]:
-
-
+# Extract company
 def extract_company(company):
     company = [re.search(r'Company: (.*)', str(i)).group(1) if re.search(r'Company: (.*)', str(i)) else "NA" for i in company]
     return company
 company = extract_company(full_description)
-extract_company(full_description)
 
 
-# In[16]:
+# In[ ]:
 
 
 description[emp]
 
 
-# In[17]:
+# In[ ]:
 
 
 def tokenizeDescription(raw_description):
@@ -314,7 +292,7 @@ print("Tokenized description:\n",tk_description[emp])
 # 
 # In the following, we wrap all these up as a function, since we will use this printing module later to compare these statistic values before and after pre-processing.
 
-# In[18]:
+# In[ ]:
 
 
 def stats_print(tk_description):
@@ -339,7 +317,7 @@ stats_print(tk_description)
 # In this sub-task, you are required to remove any token that only contains a single character (a token that of length 1).
 # You need to double-check whether it has been done properly
 
-# In[19]:
+# In[ ]:
 
 
 words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
@@ -347,7 +325,7 @@ word_counts = Counter(words) # count the number of times each word appears in th
 print("Number of words that appear only once:", len([w for w in word_counts if word_counts[w] == 1]))
 
 
-# In[20]:
+# In[ ]:
 
 
 st_list = [[w for w in description if len(w) <= 1 ]                       for description in tk_description] # create a list of single character token for each description
@@ -357,7 +335,7 @@ list(chain.from_iterable(st_list)) # merge them together in one list
 tk_description = [[w for w in description if len(w) >=2]                       for description in tk_description]
 
 
-# In[21]:
+# In[ ]:
 
 
 # Remove the top 50 most frequent words
@@ -375,7 +353,7 @@ print("Top 50 most frequent words after removing:\n",top50)
 # 
 # In this sub-task, you are required to remove the stop words from the tokenized text inside `stopwords_en.txt` file
 
-# In[22]:
+# In[ ]:
 
 
 # remove the stop words inside `stopwords_en.txt` from the tokenized text
@@ -384,7 +362,7 @@ with open('stopwords_en.txt', 'r') as f:
 print("Stop words:\n",stop_words)
 
 
-# In[23]:
+# In[ ]:
 
 
 [w for w in stop_words if ("not" in w or "n't" in w or "no" in w)]
@@ -395,7 +373,7 @@ print("Stop words:\n",stop_words)
 # In the above, we have done a few pre-processed steps, now let's have a look at the statistics again:
 # 
 
-# In[24]:
+# In[ ]:
 
 
 # specify
@@ -440,7 +418,7 @@ stats_print(tk_description)
 # * all the corresponding labels are store in a .txt file named `category.txt`
 #     * each line is a label (one of these 4 values: 0,1,2,3)
 
-# In[25]:
+# In[ ]:
 
 
 # save description text
@@ -484,7 +462,7 @@ print(f'Successfully saved title into {titleFilename}')
 # `vocab.txt`
 # This file contains the unigram vocabulary, one each line, in the following format: word_string:word_integer_index. Very importantly, words in the vocabulary must be sorted in alphabetical order, and the index value starts from 0. This file is the key to interpret the sparse encoding. For instance, in the following example, the word aaron is the 20th word (the corresponding integer_index as 19) in the vocabulary (note that the index values and words in the following image are artificial and used to demonstrate the required format only, it doesn't reflect the values of the actual expected output).
 
-# In[26]:
+# In[ ]:
 
 
 # Save all job advertisement text and information in txt file
@@ -498,7 +476,7 @@ with open('job_ad.txt', 'w') as f:
     print("Successfully write job advertisement with the tokenized description in txt file")
 
 
-# In[27]:
+# In[ ]:
 
 
 def write_vocab(vocab, filename):
@@ -512,7 +490,7 @@ write_vocab(vocab, 'vocab.txt')
 print(vocab[:10])
 
 
-# In[28]:
+# In[ ]:
 
 
 print(f'Category at index 0: {df["target_names"][0]}')
@@ -521,7 +499,7 @@ print(f'Category at index 2: {df["target_names"][2]}')
 print(f'Category at index 3: {df["target_names"][3]}')
 
 
-# In[29]:
+# In[ ]:
 
 
 # convert job ad to a dataframe
@@ -549,7 +527,7 @@ print(job_ad.info())
 job_ad.head(3)
 
 
-# In[30]:
+# In[ ]:
 
 
 # The .py format of the jupyter notebook
@@ -563,7 +541,7 @@ for fname in os.listdir():
 
 # # Reference
 
-# In[30]:
+# In[ ]:
 
 
 
