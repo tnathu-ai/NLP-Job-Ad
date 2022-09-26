@@ -364,9 +364,11 @@ tk_description = [[w for w in description if len(w) >=2]                       f
 words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
 word_counts = Counter(words) # count the number of times each word appears in the corpus
 top50 = word_counts.most_common(50) # get the top 50 most frequent words
-print("Top 50 most frequent words:\n",top50)
+print("Top 50 most frequent words:\n",top50, "\n\n")
 
 tk_description = [[w for w in description if w not in top50] for description in tk_description]
+top50 = word_counts.most_common(50) # get the top 50 most frequent words
+print("Top 50 most frequent words after removing:\n",top50)
 
 
 # ### Task 2.3 Removing Stop words
@@ -441,15 +443,24 @@ stats_print(tk_description)
 # In[25]:
 
 
+# save description text
 def save_description(descriptionFilename,tk_description):
     out_file = open(descriptionFilename, 'w') # creates a txt file and open to save the descriptions
     string = "\n".join([" ".join(description) for description in tk_description])
     out_file.write(string)
     out_file.close() # close the file
 
-def save_sentiments(sentimentFilename,category):
-    out_file = open(sentimentFilename, 'w') # creates a txt file and open to save category
+# save the category corresponding with the description text
+def save_category(categoryFilename,category):
+    out_file = open(categoryFilename, 'w') # creates a txt file and open to save category
     string = "\n".join([str(s) for s in category])
+    out_file.write(string)
+    out_file.close() # close the file
+
+# save the title corresponding with the description text
+def save_title(titleFilename,title):
+    out_file = open(titleFilename, 'w') # creates a txt file and open to save title
+    string = "\n".join([str(s) for s in title])
     out_file.write(string)
     out_file.close() # close the file
 
@@ -459,10 +470,15 @@ descriptionFilename = "description.txt"
 save_description(descriptionFilename,tk_description)
 print(f'Successfully saved description into {descriptionFilename}')
 
+# save category into txt file
 categoryFilename = "category.txt"
-# save Category into txt file
-save_sentiments(categoryFilename,category)
+save_category(categoryFilename,category)
 print(f'Successfully saved category into {categoryFilename}')
+
+# save title into txt file
+titleFilename = "title.txt"
+save_title(titleFilename,title)
+print(f'Successfully saved title into {titleFilename}')
 
 
 # `vocab.txt`
@@ -547,7 +563,7 @@ for fname in os.listdir():
 
 # # Reference
 
-# In[ ]:
+# In[30]:
 
 
 

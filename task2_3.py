@@ -36,19 +36,19 @@ import pandas as pd
 # Code to import libraries as you need in this assessment, e.g.,
 # Read job_ad.csv
 job_ad = pd.read_csv('job_ad.csv')
+
+# # get the description of the job ad
+# description = job_ad['Description']
+# # get the tokenized description of the job ad
+# tk_description = job_ad['Tokenized Description']
+webindex = job_ad['Webindex']
+
+
 # print first 3 rows
 job_ad.head(3)
-# get the description of the job ad
-description = job_ad['Description']
-# get the tokenized description of the job ad
-tk_description = job_ad['Tokenized Description']
-webindex = job_ad['Webindex']
-vocab = sorted(list(chain.from_iterable(tk_description)))
-print(tk_description)
-len(vocab)
 
 
-# In[3]:
+# In[12]:
 
 
 descriptionFile = './description.txt'
@@ -56,36 +56,35 @@ with open(descriptionFile) as f:
     tk_description = f.read().splitlines() # read all the descriptions into a list
 
 
-# In[4]:
+# In[13]:
 
 
 print(len(tk_description))
-emp = 10
-tk_description[emp]
+
+
+# In[14]:
+
+
+type(tk_description)
 
 
 # #### Converting each description text string into list of tokens
 
-# In[5]:
+# In[15]:
 
 
-tk_description = [description.split(" ") for description in tk_description] # note that we have to revert the join string into list of tokens
-tk_description[emp]
+tk_description = [description.split(" ") for description in tk_description] # note that we have to revert the join string into
 
-
-# #### Explore the current statistics
-
-# In[6]:
-
-
+# Explore the current statistics
 stats_print(tk_description)
 
 
 # #### Reading the corresponding category labels
 
-# In[7]:
+# In[16]:
 
 
+# read the category of the job ad
 categoryFile = './category.txt'
 with open(categoryFile) as f:
     category = f.read().splitlines() # read all the category into a list
@@ -94,25 +93,33 @@ with open(categoryFile) as f:
 # #### Making sure we done it right
 # Take an example, e.g., the 10th element
 
-# In[8]:
+# In[17]:
+
+
+print(f'The number of the category: {len(category)}')
+print(f'The number of the description: {len(tk_description)}')
+if len(category) == len(tk_description):
+    print(f'The number of category of category and description are the same and corresponding to each other')
+
+
+# In[18]:
 
 
 emp = 10
-print(len(category))
-category[emp]
+print(category[emp])
+tk_description[emp]
 
+
+# ### ----------------> OBSERVATION
+# 
+# We can see the length of the description text and corresponding labels are equal.
 
 # Convert the loaded category labels to integers:
 
-# In[9]:
+# In[ ]:
 
 
 category = [int(s) for s in category]
-
-
-# In[10]:
-
-
 sum(category) # seeing the total number of
 
 
@@ -127,7 +134,7 @@ sum(category) # seeing the total number of
 # * compare the results using different frequency measurements, which words are extracted based on both frequency measurements?
 # * think and decide on whether or not you would remove some of the most frequent words
 
-# In[11]:
+# In[ ]:
 
 
 from nltk.probability import *
@@ -139,13 +146,13 @@ words = list(chain.from_iterable(tk_description)) # we put all the tokens in the
 # ### Most frequent words w.r.t. Term Frequency
 # We first explore the most frequent words in terms of term frequency:
 
-# In[12]:
+# In[ ]:
 
 
 term_fd = FreqDist(words) # compute term frequency for each unique word/type
 
 
-# In[13]:
+# In[ ]:
 
 
 term_fd.most_common(25)
@@ -154,7 +161,7 @@ term_fd.most_common(25)
 # ### Most frequent words w.r.t. Document Frequency
 # We then explore the most frequent words in terms of document frequency:
 
-# In[14]:
+# In[ ]:
 
 
 words_2 = list(chain.from_iterable([set(review) for review in tk_description]))
@@ -164,7 +171,7 @@ doc_fd.most_common(25)
 
 # The list seems quite similar, let's what are in common and what are different based on the two frequency measurements.
 
-# In[15]:
+# In[ ]:
 
 
 tf_words = set(w[0] for w in term_fd.most_common(25))
@@ -173,14 +180,14 @@ df_words = set(w[0] for w in doc_fd.most_common(25))
 tf_words.union(df_words) # frequent words in both measurements
 
 
-# In[16]:
+# In[ ]:
 
 
 # words are most frequent based on term frequence, but not document frequence
 tf_words.difference(df_words)
 
 
-# In[17]:
+# In[ ]:
 
 
 # words are most frequent based on document frequence, but not term frequence
@@ -199,14 +206,14 @@ df_words.difference(tf_words)
 
 # We first need to find out the set of less frequent words by using the `hapaxes` function applied on the **term frequency** dictionary.
 
-# In[18]:
+# In[ ]:
 
 
 lessFreqWords = set(term_fd.hapaxes())
 lessFreqWords
 
 
-# In[19]:
+# In[ ]:
 
 
 len(lessFreqWords)
@@ -215,7 +222,7 @@ len(lessFreqWords)
 # Oh, a lot!!! Many of them appear to be quite ad hoc.
 # Let's remove them:
 
-# In[20]:
+# In[ ]:
 
 
 def removeLessFreqWords(review):
@@ -224,7 +231,7 @@ def removeLessFreqWords(review):
 tk_description = [removeLessFreqWords(review) for review in tk_description]
 
 
-# In[21]:
+# In[ ]:
 
 
 stats_print(tk_description)
@@ -236,7 +243,7 @@ stats_print(tk_description)
 
 # Finding the list of top 25 bigrams:
 
-# In[22]:
+# In[ ]:
 
 
 from nltk.util import ngrams
@@ -244,14 +251,14 @@ bigrams = ngrams(words, n = 2)
 fdbigram = FreqDist(bigrams)
 
 
-# In[23]:
+# In[ ]:
 
 
 bigrams = fdbigram.most_common(25) # top 25 bigrams
 bigrams
 
 
-# In[24]:
+# In[ ]:
 
 
 rep_patterns = [" ".join(bg[0]) for bg in bigrams]
@@ -261,7 +268,7 @@ rep_patterns
 # Most of them make sense and constructed meaningful phase, except `film like`,`film not`,`movie like`,`movie not`.
 # Therefore, we will include all the bigrams in the vocabulary, except the above mentioned ones.
 
-# In[25]:
+# In[ ]:
 
 
 filtered = ['film like','film not','movie like','movie not'] # define a list of bigrams that we won't include
@@ -269,7 +276,7 @@ rep_patterns = [bg for bg in rep_patterns if bg not in filtered] # create a list
 rep_patterns
 
 
-# In[26]:
+# In[ ]:
 
 
 replacements = [bg.replace(" ","_") for bg in rep_patterns] # convert the format of bigram into word1_word2
@@ -278,7 +285,7 @@ replacements
 
 # In the following, we join each tokenized review text, and replace the bigrams with the format 'word1_word2', and then we re-tokenized them again into list of tokens. As such, each bigram that we want to include in the vocabulary will become a single token.
 
-# In[27]:
+# In[ ]:
 
 
 import re
@@ -293,7 +300,7 @@ tk_description = [review.split(" ") for review in tk_description] # convert back
 
 # Have a look at the stats again :)
 
-# In[28]:
+# In[ ]:
 
 
 stats_print(tk_description)
@@ -304,7 +311,7 @@ stats_print(tk_description)
 # Now, we complete all the basic pre-process step and we are ready to move to feature generation! &#129321;
 # Before we start, in this task, you are required to construct the final vocabulary, e.g., `vocab`:
 
-# In[29]:
+# In[ ]:
 
 
 # generating the vocabulary
@@ -324,21 +331,21 @@ len(vocab)
 
 # We need to first import the `CountVectorizer` and initialise it.
 
-# In[30]:
+# In[ ]:
 
 
 # binding the words together for each review
 joined_description = [' '.join(review) for review in tk_description]
 
 
-# In[31]:
+# In[ ]:
 
 
 from sklearn.feature_extraction.text import CountVectorizer
 bVectorizer = CountVectorizer(analyzer = "word",binary = True,vocabulary = vocab) # initialise the CountVectorizer
 
 
-# In[32]:
+# In[ ]:
 
 
 binary_features = bVectorizer.fit_transform(joined_description)
@@ -349,7 +356,7 @@ binary_features.shape
 # 
 # In this subtasks, you are required to generate the count vector features of review texts.
 
-# In[33]:
+# In[ ]:
 
 
 cVectorizer = CountVectorizer(analyzer = "word",vocabulary = vocab) # initialised the CountVectorizer
@@ -361,7 +368,7 @@ count_features.shape
 # 
 # In this subtasks, you are required to generate the count vector features of review texts.
 
-# In[34]:
+# In[ ]:
 
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -370,13 +377,13 @@ tfidf_features = tVectorizer.fit_transform(joined_description) # generate the tf
 tfidf_features.shape
 
 
-# In[35]:
+# In[ ]:
 
 
 joined_description
 
 
-# In[36]:
+# In[ ]:
 
 
 tfidf_features
@@ -386,7 +393,7 @@ tfidf_features
 # 
 # So let's say we do binary feature representation but with 3 types of data, the title, the description, and title+description.
 
-# In[37]:
+# In[ ]:
 
 
 from collections import Counter
@@ -413,7 +420,7 @@ def bag_of_words(description, vocab):
 bow = [bag_of_words(description, vocab) for description in tk_description]
 
 
-# In[38]:
+# In[ ]:
 
 
 bow
@@ -426,7 +433,7 @@ bow
 # 
 # `count_vectors.txt` stores the sparse count vector representation of job advertisement descriptions in the following format. Each line of this file corresponds to one advertisement. It starts with a ‘#’ key followed by the webindex of the job advertisement, and a comma ‘,’. The rest of the line is the sparse representation of the corresponding description in the form of word_integer_index:word_freq separated by comma. Following is an example of the file format.
 
-# In[39]:
+# In[ ]:
 
 
 # save count vector representation of job advertisement descriptions
@@ -445,7 +452,7 @@ with open('count_vectors.txt', 'w') as f:
 
 # In the following, we first uses count vector features as an example to bulid a logistic regression model and  explore the preformance of the model:
 
-# In[42]:
+# In[ ]:
 
 
 from sklearn.model_selection import train_test_split
@@ -463,7 +470,7 @@ model.score(X_test, y_test) # calculated the accuracy score on the test data
 
 # Looking at the confusion matrix
 
-# In[43]:
+# In[ ]:
 
 
 from sklearn.metrics import confusion_matrix
@@ -471,7 +478,7 @@ y_pred = model.predict(X_test)
 conf_mat = confusion_matrix(y_test, y_pred)
 
 
-# In[44]:
+# In[ ]:
 
 
 import matplotlib.pyplot as plt
@@ -488,7 +495,7 @@ plt.xlabel('Predicted')
 
 # Let's explore some mis-classified examples.
 
-# In[45]:
+# In[ ]:
 
 
 import random
@@ -506,14 +513,14 @@ for p_ind in range(0, 2):
             #print out the article ID and the tokenised text content of the mis-classified examples
             for ind in random.sample(mis_inds,2): # explore 2 examples
                 print("------------------------------------------------")
-                print(joined_reviews[ind])
+                print(joined_description[ind])
                 print("-----------------------------------------------\n")
             print()
 
 
 # ### 10-Fold Cross Validation
 
-# In[46]:
+# In[ ]:
 
 
 from sklearn.model_selection import KFold
@@ -522,7 +529,7 @@ kf = KFold(n_splits= num_folds, random_state=seed, shuffle = True) # initialise 
 print(kf)
 
 
-# In[47]:
+# In[ ]:
 
 
 def evaluate(X_train,X_test,y_train, y_test,seed):
@@ -584,7 +591,7 @@ cv_df.mean()
 # Code to perform the task...
 
 
-# In[41]:
+# In[ ]:
 
 
 import os
@@ -602,3 +609,9 @@ for fname in os.listdir():
 # - please provide proper comment on your code
 # - Please re-start and run all cells to make sure codes are runable and include your output in the submission.   
 # <span style="color: red"> This markdown block can be removed once the task is completed. </span>
+
+# In[ ]:
+
+
+
+
