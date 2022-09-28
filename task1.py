@@ -50,7 +50,7 @@
 
 # ## Importing libraries 
 
-# In[ ]:
+# In[1]:
 
 
 # import libraries
@@ -65,7 +65,7 @@ import re
 import os
 
 
-# In[ ]:
+# In[2]:
 
 
 # check the version of the main packages
@@ -115,7 +115,7 @@ get_ipython().system(' python --version')
 # - Extract webIndex and description into proper data structures.
 # 
 
-# In[ ]:
+# In[3]:
 
 
 # load each folder and file inside the data folder
@@ -124,20 +124,20 @@ df = load_files(r"data")
 type(df)
 
 
-# In[ ]:
+# In[4]:
 
 
 df['target'] # this corresponding to the index value of the 4 categories
 
 
-# In[ ]:
+# In[5]:
 
 
 # Name of the categories
 df['target_names'] # this corresponding to the name value of the 4 categories
 
 
-# In[ ]:
+# In[6]:
 
 
 print(f'Category at index 0: {df["target_names"][0]}')
@@ -146,26 +146,23 @@ print(f'Category at index 2: {df["target_names"][2]}')
 print(f'Category at index 3: {df["target_names"][3]}')
 
 
-# In[ ]:
+# In[7]:
 
 
 # test whether it matches, just in case
-emp = 10 # an example, note we will use this example throughout this exercise.
-df['filenames'][emp], df['target'][emp] # from the file path we know that it's the correct class too
+emp = 20 # an example, note we will use this example to test for the whole task outputs.
+
+df['filenames'][emp], df['target'][emp] # from the file path we know that it's the correct label too
 
 
-# In[ ]:
+# In[8]:
 
 
 # assign variables
-full_description, category = df.data, df.target
+full_description, category, directory = df.data, df.target, df.filenames
 
-
-# In[ ]:
-
-
-# the 10th job advertisement description
-full_description[emp]
+# the 20th job advertisement description
+print(f'Job description: {full_description[emp]}\n\nCorresponding to the label {category[emp]} inside the {directory[emp]} directory')
 
 
 # ### ------> OBSERVATION:
@@ -174,7 +171,7 @@ full_description[emp]
 # However, the tokenizer cannot apply a string pattern on a bytes-like object. To resolve this, we decode each read `full_description` text using `utf-8` by writing a decode function
 # 
 
-# In[ ]:
+# In[9]:
 
 
 def decode(l):
@@ -200,10 +197,11 @@ full_description[emp]
 # 
 # and I only want the description itself to perform text-preprocessing and NLP on `description`. Therefore, I will perform the following pre-processing steps to the description of each job advertisement;
 
-# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.2 Pre-processing data</strong></h3>
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.2 Pre-processing</strong></h3>
 # 
+# ## 1.2.1 Extract information from each job advertisement
 # 1. Extract information from each job advertisement. Perform the following pre-processing steps to the description of each job advertisement;
-# 2. Tokenize each job advertisement description. The word tokenization must use the following regular expression, r"[a-zA-Z]+(?:[-'][a-zA-Z]+)?";
+# 2. Tokenize each job advertisement description. The word tokenization must use the following regular expression, `r"[a-zA-Z]+(?:[-'][a-zA-Z]+)?"`;
 # 3. All the words must be converted into the lower case;
 # 4. Remove words with length less than 2.
 # 5. Remove stopwords using the provided stop words list (i.e, stopwords_en.txt). It is located inside the
@@ -216,43 +214,43 @@ full_description[emp]
 # 9. Build a vocabulary of the cleaned job advertisement descriptions, save it in a txt file (please refer to the
 # required output);
 
-# In[ ]:
+# In[10]:
 
 
-# Extract description, title, webindex,  from each job advertisement. 
+# Extract description, title, webindex,  from each job advertisement and test using emp
 
+# Extract description
 def extract_description(full_description):
     description = [re.search(r'\nDescription: (.*)', str(i)).group(1) for i in full_description]
     return description
 description = extract_description(full_description)
+print(f'Job description at index {emp}:\n{description[emp]}\n')
 
 # Extract title
 def extract_title(full_description):
     title = [re.search(r'Title: (.*)', str(i)).group(1) for i in full_description]
     return title
 title = extract_title(full_description)
+print(f'Job title at index {emp}:\n{title[emp]}\n')
 
-# Extract Webindex
+# Extract webindex
 def extract_webindex(full_description):
     webindex = [re.search(r'Webindex: (.*)', str(i)).group(1) for i in full_description]
     return webindex
-
 webindex = extract_webindex(full_description)
+print(f'Job webindex at index {emp}:\n{webindex[emp]}\n')
 
 # Extract company
 def extract_company(company):
     company = [re.search(r'Company: (.*)', str(i)).group(1) if re.search(r'Company: (.*)', str(i)) else "NA" for i in company]
     return company
 company = extract_company(full_description)
+print(f'Job company at index {emp}:\n{company[emp]}\n')
 
 
-# In[ ]:
+# ## 1.2.2 + 1.2.3 Tokenize each job advertisement description lowing regular expression & lowercase all words
 
-
-description[emp]
-
-
-# In[ ]:
+# In[11]:
 
 
 def tokenizeDescription(raw_description):
@@ -261,8 +259,7 @@ def tokenizeDescription(raw_description):
         it then segment the raw description into sentences and tokenize each sentences
         and convert the description to a list of tokens.
     """
-    # description = raw_description.decode('utf-8') # convert the bytes-like object to python string, need this before we apply any pattern search on it
-    description = raw_description.lower() # cover all words to lowercase
+    description = raw_description.lower() # convert all words to lowercase
 
     # segment into sentences
     sentences = sent_tokenize(description)
@@ -279,7 +276,8 @@ def tokenizeDescription(raw_description):
 tk_description = [tokenizeDescription(r) for r in description]  # list comprehension, generate a list of tokenized articles
 
 print("Raw description:\n",description[emp],'\n')
-print("Tokenized description:\n",tk_description[emp])
+print("Tokenized description:\n",tk_description[emp],'\n\n')
+print("The original number of Tokenized description tokens: ",len(tk_description))
 
 
 # #### A Few Statistics Before Any Further Pre-processing
@@ -292,7 +290,7 @@ print("Tokenized description:\n",tk_description[emp])
 # 
 # In the following, we wrap all these up as a function, since we will use this printing module later to compare these statistic values before and after pre-processing.
 
-# In[ ]:
+# In[12]:
 
 
 def stats_print(tk_description):
@@ -312,34 +310,34 @@ def stats_print(tk_description):
 stats_print(tk_description)
 
 
-# ### Task 2.2 Remove words with length less than 2.
-# 
-# In this sub-task, you are required to remove any token that only contains a single character (a token that of length 1).
-# You need to double-check whether it has been done properly
+# ## Task 1.2.4 Remove words with length less than 2.
+# + We have 2 types of most frequent words is that in terms either term frequency or document frequency
+# + In this sub-task, you are required to remove any token that only contains a single character (a token that of length less than 2).
 
-# In[ ]:
+# In[13]:
 
 
 words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
 word_counts = Counter(words) # count the number of times each word appears in the corpus
-print("Number of words that appear less than 2:", len([w for w in word_counts if word_counts[w] <= 1]))
-
-
-# In[ ]:
-
-
-st_list = [[w for w in description if len(w) <= 1 ]                       for description in tk_description] # create a list of single character token for each description
-list(chain.from_iterable(st_list)) # merge them together in one list
+print("Before removing, the number of words that appear with length less than 2:", len([w for w in word_counts if word_counts[w] < 2]))
 
 # filter out single character tokens
 tk_description = [[w for w in description if len(w) >=2]                       for description in tk_description]
 
 words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
 word_counts = Counter(words) # count the number of times each word appears in the corpus
-print("Number of words that appear less than 2:", len([w for w in word_counts if word_counts[w] <= 1]))
+print("After removing, the number of words that appear less than 2:", len([w for w in word_counts if word_counts[w] < 2]))
 
 
-# In[ ]:
+# ### Task 2.3 Remove the top 50 most frequent words based on document frequency.
+# + We have 2 types of most frequent words is that in terms either term frequency or document frequency
+# 
+# Explore the most frequent words in the pre-processed tokenized review text corpus:
+# * explore the most frequent words (top 50) based on term frequency and document frequency, respectively
+# * compare the results using different frequency measurements, which words are extracted based on both frequency measurements?
+# * think and decide on whether or not you would remove some of the most frequent words 
+
+# In[14]:
 
 
 # Remove the top 50 most frequent words
@@ -348,28 +346,112 @@ word_counts = Counter(words) # count the number of times each word appears in th
 top50 = word_counts.most_common(50) # get the top 50 most frequent words
 print("Top 50 most frequent words:\n",top50, "\n\n")
 
-tk_description = [[w for w in description if w not in top50] for description in tk_description]
+tk_description = [[w for w in tk_description if w not in top50] for description in tk_description]
 top50 = word_counts.most_common(50) # get the top 50 most frequent words
 print("Top 50 most frequent words after removing:\n",top50)
 
 
-# ### Task 2.3 Removing Stop words
+# ## Task 1.2.5 Remove stopwords using the provided stop words list (i.e, stopwords_en.txt)
+# > **Be CAREFUL**: as mentioned before, the purpose of this task is to pre-process the text reviews and later on we are going to use the pre-process text to build a sentiment analysis model. The stop word removal process requires careful consideration in this type of task.
 # 
-# In this sub-task, you are required to remove the stop words from the tokenized text inside `stopwords_en.txt` file
+# Remove the stop words from the tokenized text inside `stopwords_en.txt` file
 
 # In[ ]:
 
 
 # remove the stop words inside `stopwords_en.txt` from the tokenized text
-with open('stopwords_en.txt', 'r') as f:
-    stop_words = f.read().splitlines() # read the stop words into a list
-print("Stop words:\n",stop_words)
+stopwords_file = 'stopwords_en.txt'
+
+# read the stop words into a list
+with open(stopwords_file, 'r') as f:
+    stop_words = f.read().splitlines() 
+print(f'The number of stop words inside {stopwords_file} is {len(stop_words)} including:\n\n{stop_words}')
+
+
+# ### -----------> OBSERVATION:
+# + There 571 stopwords in total, which are often function words in English, like articles (e.g. "the", and "an"), pronouns (e.g. "he", "him", and "they"), particles (e.g., "well", "however" and "thus"), etc, and universal words in all job advertisement (e.g.'ask', 'asking', 'used', and 'useful')
+# 
+# + Note this this is just one of the lists and we emphasize that there is no universal list of stop words. 
+
+# In[ ]:
+
+
+# flitering stop words
+print("Before stopword removal:",len(tk_description)," tokens")
+tk_description = [token for token in tk_description if token not in stop_words]
+print("After stopword removal:",len(tk_description)," tokens")
+
+
+# In[ ]:
+
+
+filtered_tokens = [token for token in tk_description if token in stop_words]
+filtered_tokens
 
 
 # In[ ]:
 
 
 [w for w in stop_words if ("not" in w or "n't" in w or "no" in w)]
+
+
+# ## Task 1.2.6 Remove the word that appears only once in the document collection, based on term frequency
+# 
+# move on to the less frequent words:
+# * find out the list of words that appear only once in the **entire corpus**
+# * remove these less frequent words from each tokenized description text
+# 
+# We first need to find out the set of less frequent words by using the `hapaxes` function applied on the **term frequency** dictionary. 
+
+# In[18]:
+
+
+from nltk.probability import *
+from itertools import chain
+
+words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
+term_fd = FreqDist(words) # compute term frequency for each unique word/type
+
+
+# In[20]:
+
+
+lessFreqWords = set(term_fd.hapaxes())
+print(len(lessFreqWords))
+lessFreqWords
+
+
+# In[ ]:
+
+
+def removeLessFreqWords(description):
+    return [w for w in description if w not in lessFreqWords]
+
+tk_reviews = [removeLessFreqWords(description) for description in tk_description]
+
+stats_print(tk_reviews)
+
+
+# ## Task 1.2.7 Remove the top 50 most frequent words based on document frequency.
+
+# In[ ]:
+
+
+words = list(chain.from_iterable([set(description) for description in tk_description]))
+doc_fd = FreqDist(words)  # compute document frequency for each unique word/type
+top50MostFreqWords = doc_fd.most_common(50)
+top50MostFreqWords
+
+
+# In[ ]:
+
+
+def removeMostFreqWords(description):
+    return [w for w in description if w not in top50MostFreqWords]
+
+tk_reviews = [removeMostFreqWords(description) for description in tk_description]
+
+stats_print(tk_reviews)
 
 
 # #### The Updated Statistics
@@ -413,7 +495,7 @@ stats_print(tk_description)
 
 # category
 
-# ## Saving required outputs
+# ## Task 1.2.8 Save all job advertisement text and information in txt files (we will retrieve them. in task 2 and 3)
 # Save the vocabulary, bigrams and job advertisment txt as per spectification.
 # 
 # We are going to store all the preprocessed description texts and its corresponding labels into files for task 2.
@@ -446,7 +528,6 @@ def save_title(titleFilename,title):
     out_file.write(string)
     out_file.close() # close the file
 
-
 # save description into txt file
 descriptionFilename = "description.txt"
 save_description(descriptionFilename,tk_description)
@@ -463,6 +544,8 @@ save_title(titleFilename,title)
 print(f'Successfully saved title into {titleFilename}')
 
 
+# ## Task 1.2.9 Build a vocabulary of the cleaned job advertisement descriptions
+# 
 # `vocab.txt`
 # This file contains the unigram vocabulary, one each line, in the following format: word_string:word_integer_index. Very importantly, words in the vocabulary must be sorted in alphabetical order, and the index value starts from 0. This file is the key to interpret the sparse encoding. For instance, in the following example, the word aaron is the 20th word (the corresponding integer_index as 19) in the vocabulary (note that the index values and words in the following image are artificial and used to demonstrate the required format only, it doesn't reflect the values of the actual expected output).
 
@@ -540,25 +623,45 @@ for fname in os.listdir():
         os.system(f'jupyter nbconvert {fname} --to python')
 
 
-# ## Summary
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.3 Summary</strong></h3>
 # 
 # In this activity, we have demonstrated the basic text pre-processing steps of sentence segmentation and tokenization. 
 # There are a couple of things that we should keep in mind:
 # 
+# * we have covered the fundamentals of text pre-processing steps of Case Normalization, Stop Word Removing, Stemming and Lemmatization. 
+# 
+# * As mentioned before, though these steps are doing very different things to the text we have, however, one common effect among them, is the reduction on the size of the vocabulary (the list of distinct words contained in the corpus). 
+# 
 # * How we should process the text depends on the downstream analysis. Before we do any pre-processing, we should decide on the scope of the text to be used in the downstream analysis task. For instance, should we use an entire document? Or should we break the document down into sections, paragraphs, or sentences. Take another example. If we are analysing emails, should we keep the headers information? or should we focus on the email body? Choosing the proper scope depends on the goals of the analysis task. For example, you might choose to use an entire document in document classification and clustering tasks while one might choose smaller units like paragraphs or sentences in document summarization and information retrieval tasks. The scope chosen will have an  impact on the steps needed in the pre-processing process.
 # 
 # * In this activity, we have shown you multiple ways to do tokenization. However, there is no single right way to do tokenization.  It completely depends on the corpus and the text analysis task you are going to perform. The major question of the tokenization phase is what counts as a token. In some of the text analysis task. Although word tokenization is relatively easy compared with other NLP or text mining task, errors made in this phase will propagate into later analysis and cause problems.
-
-# # Reference
-# [1] Sentence boundary disambiguation. https://en.wikipedia.org/wiki/Sentence_boundary_disambiguation
-# [2] Tokenization. https://nlp.stanford.edu/IR-book/html/htmledition/tokenization-1.html  
-# [3] Your Guide to Natural Language Processing (NLP). https://towardsdatascience.com/your-guide-to-natural-language-processing-nlp-48ea2511f6e1  
-# [4] Introduction to Natural Language Processing for Text. https://towardsdatascience.com/introduction-to-natural-language-processing-for-text-df845750fb63  
-# [5] [Accessing Text Corpora and Lexical Resources](http://www.nltk.org/book/ch02.html): Chapter 2 of "Natural Language Processing with Python" By Steven Bird, Ewan Kelin & Edward Loper.  
-# [6]. [Corpus Readers](http://www.nltk.org/howto/corpus.html#tagged-corpora): An NLTK tutorial on accessing the contents of a diverse set of corpora.
+# 
+# * Case Normalization is a very simple process to do, though it is indeed very effective. 
+# The above is a very simple example (consisting of a very short paragraph) and it might not show much reduction on the vocabulary size. Imagine if you have a large corpus, doing case normalization will significantly reduce the vocabulary size, and thus helps the analysis algorithms to focus on different meaning of tokens rather than its cases.
 
 # In[ ]:
 
 
+print("Number of distinct words BEFORE further pre-processing:",len(set(description)))
+print("Number of distinct words AFTER further pre-processing:",len(set(tk_description)))
 
 
+# > # Discussion
+# >>In some of the text analysis tasks, we have to be mindful in the process of stopword removal. 
+# In some scenarios, stop words removal can wipe out relevant information and modify the context in a given sentence. 
+# For example, if we are performing a sentiment analysis, the word 'not', although is a stop word, it carries critical information, i.e. 'like' and 'not like' obviously are carrying completely reversed meaning.
+# We might fool out our algorithm off track if we remove a stop word like “not”. 
+# You should always carefully consider these conditions, design the list of "stop words" that are to removed based on your specific objectives.
+
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.4 References</strong></h3>
+# 
+# 
+# + [1] Sentence boundary disambiguation. https://en.wikipedia.org/wiki/Sentence_boundary_disambiguation
+# + [2] Tokenization. https://nlp.stanford.edu/IR-book/html/htmledition/tokenization-1.html  
+# + [3] Your Guide to Natural Language Processing (NLP). https://towardsdatascience.com/your-guide-to-natural-language-processing-nlp-48ea2511f6e1  
+# + [4] Introduction to Natural Language Processing for Text. https://towardsdatascience.com/introduction-to-natural-language-processing-for-text-df845750fb63  
+# + [5] [Accessing Text Corpora and Lexical Resources](http://www.nltk.org/book/ch02.html): Chapter 2 of "Natural Language Processing with Python" By Steven Bird, Ewan Kelin & Edward Loper.  
+# + [6]. [Corpus Readers](http://www.nltk.org/howto/corpus.html#tagged-corpora): An NLTK tutorial on accessing the contents of a diverse set of corpora.
+# 
+# + [1] Stop words. https://en.wikipedia.org/wiki/Stop_word  
+# + [3] Bird, Steven, Edward Loper and Ewan Klein (2009), [Natural Language Processing with Python](http://www.nltk.org/book/). O’Reilly Media Inc.  
