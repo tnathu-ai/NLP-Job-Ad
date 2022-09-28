@@ -3,7 +3,7 @@
 
 # # Assignment 2: Milestone I Natural Language Processing
 # 
-# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Task 1. Basic Text Pre-processing</strong></h3>
+# <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Task 1. Text Pre-processing</strong></h3>
 # 
 # #### Student Name: Tran Ngoc Anh Thu
 # #### Student ID: s3879312
@@ -26,15 +26,16 @@
 # 
 # ## Steps
 # 1. Load data
-# 2. Text Pre-processing
+# 2. Basic Text Pre-processing
 #     * Sentence Segmentation
 #     * Word Tokenization
 #     * Removing Single Character Tokens
 #     * Removing Stop words
-# 3. Saving the Pre-processing Reviews
+# 3. Summary
+# 4. References
 # 
 # ## Introduction
-# Nowadays there are many job hunting websites including seek.com.au and au.indeed.com. These job hunting sites all manage a job search system, where job hunters could search for relevant jobs based on keywords, salary, and categories. In previous years, the category of an advertised job was often manually entered by the advertiser (e.g., the employer). There were mistakes made for category assignment. As a result, the jobs in the wrong class did not get enough exposure to relevant candidate groups.
+# Nowadays there are many job hunting websites including seek.com.au and au.indeed.com. These job hunting sites all manage a job search system, where job hunters could search for relevant jobs based on keywords, salary, and categories. In previous years, the category of an advertised job was often manually entered by the advertiser (e.g., the test_indexloyer). There were mistakes made for category assignment. As a result, the jobs in the wrong class did not get enough exposure to relevant candidate groups.
 # With advances in text analysis, automated job classification has become feasible; and sensible suggestions for job categories can then be made to potential advertisers. This can help reduce human data entry error, increase the job exposure to relevant candidates, and also improve the user experience of the job hunting site. In order to do so, we need an automated job ads classification system that helps to predict the categories of newly entered job advertisements.
 # 
 # In this **task1** notebook, we are going to explore a job advertisement data set, and focus on pre-processing the description only.
@@ -100,14 +101,15 @@ get_ipython().system(' python --version')
 # df = load_files(r"data")  
 # ```
 # 
-# The loaded `movie_data` is then a dictionary, with the following attributes:
+# The loaded `data` is then a dictionary, with the following attributes:
 # 
 # | **ATTRIBUTES**   | **DESCRIPTION**                                           |
 # |--------------|---------------------------------------------------------------|
 # | Webindex     | 8 digit Id of the job advertisement on the website            |
 # | Title        | Title of the advertised job position                          |
-# | Company      | Company (employer) of the advertised job position             |
+# | Company      | Company (test_indexloyer) of the advertised job position             |
 # | Description  | the description of each job advertisement                     |
+# | Category     | The category of the advertised job position                   |
 # 
 # 
 # - Examine the data folder, including the categories and job advertisment txt documents, etc. Explain your findings here, e.g., number of folders and format of txt files, etc.
@@ -121,7 +123,7 @@ get_ipython().system(' python --version')
 # load each folder and file inside the data folder
 df = load_files(r"data")
 # type of the loaded file
-type(df)
+print(f'Data type of the loaded data and labels using sklearn API: {type(df)}')
 
 
 # In[4]:
@@ -140,20 +142,25 @@ df['target_names'] # this corresponding to the name value of the 4 categories
 # In[6]:
 
 
-print(f'Category at index 0: {df["target_names"][0]}')
-print(f'Category at index 1: {df["target_names"][1]}')
-print(f'Category at index 2: {df["target_names"][2]}')
-print(f'Category at index 3: {df["target_names"][3]}')
+# loop through the index of the target_names and print the category name
+for i in range(len(df['target_names'])):
+    print(f'Category at index {i}: {df["target_names"][i]}')
 
+
+# **Create temporary variable and assign a number for testing at that index**
+# 
+# `test_index` is a number to test whether the attribute at that position matches the desired outputs. So we don't need to print to whole lengthly output each test and void memory problems
 
 # In[7]:
 
 
-# test whether it matches, just in case
-emp = 20 # an example, note we will use this example to test for the whole task outputs.
+test_index = 20 # an example to test for the whole task outputs.
 
-df['filenames'][emp], df['target'][emp] # from the file path we know that it's the correct label too
+df['filenames'][test_index], df['target'][test_index] 
 
+
+# ### --------------> OBSERVATION
+# from the file path and the label we know that it's the correct label too
 
 # In[8]:
 
@@ -161,8 +168,8 @@ df['filenames'][emp], df['target'][emp] # from the file path we know that it's t
 # assign variables
 full_description, category, directory = df.data, df.target, df.filenames
 
-# the 20th job advertisement description
-print(f'Job description: {full_description[emp]}\n\nCorresponding to the label {category[emp]} inside the {directory[emp]} directory')
+# the test_index job advertisement description
+print(f'Job description: {full_description[test_index]}\n\nCorresponding to the label {category[test_index]} inside the {directory[test_index]} directory')
 
 
 # ### ------> OBSERVATION:
@@ -170,6 +177,7 @@ print(f'Job description: {full_description[emp]}\n\nCorresponding to the label {
 # 
 # However, the tokenizer cannot apply a string pattern on a bytes-like object. To resolve this, we decode each read `full_description` text using `utf-8` by writing a decode function
 # 
+# ### Decode the description
 
 # In[9]:
 
@@ -182,24 +190,23 @@ def decode(l):
 
 # decode the binary description into utf-8 form and save it to full_description
 full_description = decode(full_description)
-full_description[emp]
+full_description[test_index]
 
 
 # ### ---------------> OBSERVATION:
-# The current `description` contains these attributes:
+# The current `full_description` contains these attributes:
 # 
 # | **ATTRIBUTES**   | **MEANING**                                        |
 # |--------------|----------------------------------------------------|
 # | Webindex     | 8 digit Id of the job advertisement on the website |
 # | Title        | Title of the advertised job position               |
-# | Company      | Company (employer) of the advertised job position  |
+# | Company      | Company (test_indexloyer) of the advertised job position  |
 # | Description  | the description of each job advertisement          |
 # 
-# and I only want the description itself to perform text-preprocessing and NLP on `description`. Therefore, I will perform the following pre-processing steps to the description of each job advertisement;
+# I only want the description to perform text-preprocessing in task 1 and other attributes for further exploring different features of a job advertisement, e.g., the title in task 3, to test the accuracy. Therefore, I will extract each above attribute inside the `full_description`
 
 # <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.2 Pre-processing</strong></h3>
 # 
-# ## 1.2.1 Extract information from each job advertisement
 # 1. Extract information from each job advertisement. Perform the following pre-processing steps to the description of each job advertisement;
 # 2. Tokenize each job advertisement description. The word tokenization must use the following regular expression, `r"[a-zA-Z]+(?:[-'][a-zA-Z]+)?"`;
 # 3. All the words must be converted into the lower case;
@@ -213,42 +220,45 @@ full_description[emp]
 # text in Task 2 & 3);
 # 9. Build a vocabulary of the cleaned job advertisement descriptions, save it in a txt file (please refer to the
 # required output);
+# 
+# ## 1.2.1 Extract information from each job advertisement
 
 # In[10]:
 
 
-# Extract description, title, webindex,  from each job advertisement and test using emp
+# Extract description, title, webindex,  from each job advertisement and test using test_index
 
 # Extract description
 def extract_description(full_description):
     description = [re.search(r'\nDescription: (.*)', str(i)).group(1) for i in full_description]
     return description
 description = extract_description(full_description)
-print(f'Job description at index {emp}:\n{description[emp]}\n')
+print(f'Job description at index {test_index}:\n{description[test_index]}\n')
 
 # Extract title
 def extract_title(full_description):
     title = [re.search(r'Title: (.*)', str(i)).group(1) for i in full_description]
     return title
 title = extract_title(full_description)
-print(f'Job title at index {emp}:\n{title[emp]}\n')
+print(f'Job title at index {test_index}:\n{title[test_index]}\n')
 
 # Extract webindex
 def extract_webindex(full_description):
     webindex = [re.search(r'Webindex: (.*)', str(i)).group(1) for i in full_description]
     return webindex
 webindex = extract_webindex(full_description)
-print(f'Job webindex at index {emp}:\n{webindex[emp]}\n')
+print(f'Job webindex at index {test_index}:\n{webindex[test_index]}\n')
 
 # Extract company
 def extract_company(company):
     company = [re.search(r'Company: (.*)', str(i)).group(1) if re.search(r'Company: (.*)', str(i)) else "NA" for i in company]
     return company
 company = extract_company(full_description)
-print(f'Job company at index {emp}:\n{company[emp]}\n')
+print(f'Job company at index {test_index}:\n{company[test_index]}\n')
 
 
-# ## 1.2.2 + 1.2.3 Tokenize each job advertisement description lowing regular expression & lowercase all words
+# ## 1.2.2 + 1.2.3 
+# ## Tokenize description using regular expression & lowercase all words
 
 # In[11]:
 
@@ -275,8 +285,8 @@ def tokenizeDescription(raw_description):
 
 tk_description = [tokenizeDescription(r) for r in description]  # list comprehension, generate a list of tokenized articles
 
-print("Raw description:\n",description[emp],'\n')
-print("Tokenized description:\n",tk_description[emp],'\n\n')
+print("Raw description:\n",description[test_index],'\n')
+print("Tokenized description:\n",tk_description[test_index],'\n\n')
 print("The original number of Tokenized description tokens: ",len(tk_description))
 
 
@@ -311,8 +321,7 @@ stats_print(tk_description)
 
 
 # ## Task 1.2.4 Remove words with length less than 2.
-# + We have 2 types of most frequent words is that in terms either term frequency or document frequency
-# + In this sub-task, you are required to remove any token that only contains a single character (a token that of length less than 2).
+# remove any token that only contains a single character (a token that of length less than 2).
 
 # In[13]:
 
@@ -329,34 +338,12 @@ word_counts = Counter(words) # count the number of times each word appears in th
 print("After removing, the number of words that appear less than 2:", len([w for w in word_counts if word_counts[w] < 2]))
 
 
-# ### Task 2.3 Remove the top 50 most frequent words based on document frequency.
-# + We have 2 types of most frequent words is that in terms either term frequency or document frequency
-# 
-# Explore the most frequent words in the pre-processed tokenized review text corpus:
-# * explore the most frequent words (top 50) based on term frequency and document frequency, respectively
-# * compare the results using different frequency measurements, which words are extracted based on both frequency measurements?
-# * think and decide on whether or not you would remove some of the most frequent words 
-
-# In[14]:
-
-
-# Remove the top 50 most frequent words
-words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
-word_counts = Counter(words) # count the number of times each word appears in the corpus
-top50 = word_counts.most_common(50) # get the top 50 most frequent words
-print("Top 50 most frequent words:\n",top50, "\n\n")
-
-tk_description = [[w for w in tk_description if w not in top50] for description in tk_description]
-top50 = word_counts.most_common(50) # get the top 50 most frequent words
-print("Top 50 most frequent words after removing:\n",top50)
-
-
-# ## Task 1.2.5 Remove stopwords using the provided stop words list (i.e, stopwords_en.txt)
-# > **Be CAREFUL**: as mentioned before, the purpose of this task is to pre-process the text reviews and later on we are going to use the pre-process text to build a sentiment analysis model. The stop word removal process requires careful consideration in this type of task.
+# ## Task 1.2.5 Remove stopwords using the provided stop words list
+# > **NOTE**: as mentioned before, the purpose of this task is to pre-process the text reviews and later on we are going to use the pre-process text to build a sentiment analysis model. The stop word removal process requires careful consideration in this type of task.
 # 
 # Remove the stop words from the tokenized text inside `stopwords_en.txt` file
 
-# In[ ]:
+# In[14]:
 
 
 # remove the stop words inside `stopwords_en.txt` from the tokenized text
@@ -371,33 +358,40 @@ print(f'The number of stop words inside {stopwords_file} is {len(stop_words)} in
 # ### -----------> OBSERVATION:
 # + There 571 stopwords in total, which are often function words in English, like articles (e.g. "the", and "an"), pronouns (e.g. "he", "him", and "they"), particles (e.g., "well", "however" and "thus"), etc, and universal words in all job advertisement (e.g.'ask', 'asking', 'used', and 'useful')
 # 
-# + Note this this is just one of the lists and we emphasize that there is no universal list of stop words. 
+# + Note this this is just one of the lists and we test_indexhasize that there is no universal list of stop words. 
 
-# In[ ]:
+# In[15]:
+
+
+# check which words inside the description also inside inside `stopwords_en.txt`
+filtered_tokens_test_index = [[token for token in description if token in stop_words] for description in tk_description[test_index]]
+filtered_tokens_test_index
+
+
+# In[16]:
 
 
 # flitering stop words
-print("Before stopword removal:",len(tk_description)," tokens")
-tk_description = [token for token in tk_description if token not in stop_words]
-print("After stopword removal:",len(tk_description)," tokens")
+
+# print the test_index index description length before removing stop words
+print("The number of tokens in the test_index index description BEFORE removing stop words:",len(tk_description[test_index]))
+
+# filter stop words in each document for the whole tokenized description
+tk_description = [[token for token in description if token not in stop_words] for description in tk_description]
+
+# print the test_index index description length after removing stop words
+print("The number of tokens in the test_index index description AFTER removing stop words:",len(tk_description[test_index]))
 
 
-# In[ ]:
+# In[17]:
 
 
-filtered_tokens = [token for token in tk_description if token in stop_words]
-filtered_tokens
-
-
-# In[ ]:
-
-
+# should I filter this?
 [w for w in stop_words if ("not" in w or "n't" in w or "no" in w)]
 
 
 # ## Task 1.2.6 Remove the word that appears only once in the document collection, based on term frequency
 # 
-# move on to the less frequent words:
 # * find out the list of words that appear only once in the **entire corpus**
 # * remove these less frequent words from each tokenized description text
 # 
@@ -412,29 +406,26 @@ from itertools import chain
 words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
 term_fd = FreqDist(words) # compute term frequency for each unique word/type
 
-
-# In[20]:
-
-
+# Using hapaxes() to see less frequent words in term frequency
 lessFreqWords = set(term_fd.hapaxes())
-print(len(lessFreqWords))
+print(f'The number of words that appear only once in the entire corpus {len(lessFreqWords)}\n')
 lessFreqWords
 
 
-# In[ ]:
+# In[19]:
 
 
 def removeLessFreqWords(description):
     return [w for w in description if w not in lessFreqWords]
 
-tk_reviews = [removeLessFreqWords(description) for description in tk_description]
+tk_description = [removeLessFreqWords(description) for description in tk_description]
 
-stats_print(tk_reviews)
+stats_print(tk_description)
 
 
 # ## Task 1.2.7 Remove the top 50 most frequent words based on document frequency.
 
-# In[ ]:
+# In[20]:
 
 
 words = list(chain.from_iterable([set(description) for description in tk_description]))
@@ -443,35 +434,35 @@ top50MostFreqWords = doc_fd.most_common(50)
 top50MostFreqWords
 
 
-# In[ ]:
+# In[21]:
 
 
 def removeMostFreqWords(description):
     return [w for w in description if w not in top50MostFreqWords]
 
-tk_reviews = [removeMostFreqWords(description) for description in tk_description]
-
-stats_print(tk_reviews)
-
-
-# #### The Updated Statistics
-# 
-# In the above, we have done a few pre-processed steps, now let's have a look at the statistics again:
-# 
-
-# In[ ]:
-
-
-# specify
-ignored_words = [w for w in stop_words if not ("not" in w or "n't" in w or "no" in w)]
-
-# filter out stop words
-tk_description = [[w for w in description if w not in ignored_words]                       for description in tk_description]
+tk_description = [removeMostFreqWords(description) for description in tk_description]
 
 stats_print(tk_description)
 
 
-# Recall, from the beginning, we have the following:  
+# ### The Updated Statistics
+# In the above, we have done all required pre-processed steps, now let's have a look at the statistics again:
+
+# In[22]:
+
+
+# # specify
+# ignored_words = [w for w in stop_words if not ("not" in w or "n't" in w or "no" in w)]
+
+# # filter out stop words
+# tk_description = [[w for w in description if w not in ignored_words] \
+#                       for description in tk_description]
+
+
+print(f'The final statistic after pre-processing:\n{stats_print(tk_description)}')
+
+
+# **Recall, from the beginning, we have the following:**  
 # _____________________________________________
 # 
 # Vocabulary size:  9834
@@ -493,8 +484,6 @@ stats_print(tk_description)
 # 
 # We've shrunk more than 40% of the vocabulary.
 
-# category
-
 # ## Task 1.2.8 Save all job advertisement text and information in txt files (we will retrieve them. in task 2 and 3)
 # Save the vocabulary, bigrams and job advertisment txt as per spectification.
 # 
@@ -504,7 +493,7 @@ stats_print(tk_description)
 # * all the corresponding labels are store in a .txt file named `category.txt`
 #     * each line is a label (one of these 4 values: 0,1,2,3)
 
-# In[ ]:
+# In[23]:
 
 
 # save description text
@@ -547,46 +536,36 @@ print(f'Successfully saved title into {titleFilename}')
 # ## Task 1.2.9 Build a vocabulary of the cleaned job advertisement descriptions
 # 
 # `vocab.txt`
-# This file contains the unigram vocabulary, one each line, in the following format: word_string:word_integer_index. Very importantly, words in the vocabulary must be sorted in alphabetical order, and the index value starts from 0. This file is the key to interpret the sparse encoding. For instance, in the following example, the word aaron is the 20th word (the corresponding integer_index as 19) in the vocabulary (note that the index values and words in the following image are artificial and used to demonstrate the required format only, it doesn't reflect the values of the actual expected output).
+# 
+# This file contains the unigram vocabulary, one each line, in the following format: word_string:word_integer_index. Very importantly, words in the vocabulary must be sorted in alphabetical order, and the index value starts from 0. This file is the key to interpret the sparse encoding. For instance, in the following example, the word aaron is the test_index word (the corresponding integer_index as 19) in the vocabulary (note that the index values and words in the following image are artificial and used to demonstrate the required format only, it doesn't reflect the values of the actual expected output).
 
-# In[ ]:
-
-
-# Save all job advertisement text and information in txt file
-with open('job_ad.txt', 'w') as f:
-    f.write("Category: " + str(category) + "\n")
-    for i in range(len(tk_description)):
-        f.write(full_description[i] + "\n")
-        f.write("Tokenized Description: " + str(tk_description[i]) + "\n")
-        f.write("Category: " + str(df['target'][i]) + "\n")
-        f.write("\n")
-    print("Successfully write job advertisement with the tokenized description in txt file")
-
-
-# In[ ]:
+# In[24]:
 
 
 def write_vocab(vocab, filename):
     with open(filename, 'w') as f:
         for i, word in enumerate(vocab):
             f.write(word + ':' + str(i) + '\n')
+            
 # convert tokenized description into a alphabetically sorted list
 vocab = sorted(list(set(chain.from_iterable(tk_description))))
+
+# save the sorted vocabulary list into a file according to the required format
 write_vocab(vocab, 'vocab.txt')
-# print out the first 10 words in the vocabulary
+
+# print out the first 10 words in the vocabulary to test
 print(vocab[:10])
 
 
-# In[ ]:
+# In[25]:
 
 
-print(f'Category at index 0: {df["target_names"][0]}')
-print(f'Category at index 1: {df["target_names"][1]}')
-print(f'Category at index 2: {df["target_names"][2]}')
-print(f'Category at index 3: {df["target_names"][3]}')
+# loop through the index of the target_names and print the category name
+for i in range(len(df['target_names'])):
+    print(f'Category at index {i}: {df["target_names"][i]}')
 
 
-# In[ ]:
+# In[26]:
 
 
 # convert job ad to a dataframe
@@ -595,12 +574,7 @@ job_ad = pd.DataFrame({'Title': title, 'Webindex': webindex, 'Company': company,
 # change Tokenized Description to string separated by space
 job_ad['Tokenized Description'] = job_ad['Tokenized Description'].apply(lambda x: ' '.join([str(i) for i in x]))
 
-
 # replace the value in Category column
-# Category at index 0: Accounting_Finance
-# Category at index 1: Engineering
-# Category at index 2: Healthcare_Nursing
-# Category at index 3: Sales
 job_ad['Category'] = job_ad['Category'].replace([0,1,2,3],['Accounting_Finance','Engineering','Healthcare_Nursing','Sales'])
 
 # Cast Webindex to int
@@ -609,12 +583,16 @@ job_ad['Webindex'] = job_ad['Webindex'].astype(int)
 # save job ad to csv file
 job_ad.to_csv('job_ad.csv', index=False)
 
+# print basic info about the job_ad data frame
 print(job_ad.info())
+
 # print first 3 rows
 job_ad.head(3)
 
 
-# In[ ]:
+# ### Convert all `.ipynb` notebooks in the same directory into `.py` files
+
+# In[27]:
 
 
 # The .py format of the jupyter notebook
@@ -625,7 +603,7 @@ for fname in os.listdir():
 
 # <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.3 Summary</strong></h3>
 # 
-# In this activity, we have demonstrated the basic text pre-processing steps of sentence segmentation and tokenization. 
+# We have demonstrated the basic text pre-processing steps of sentence segmentation and tokenization. 
 # There are a couple of things that we should keep in mind:
 # 
 # * we have covered the fundamentals of text pre-processing steps of Case Normalization, Stop Word Removing, Stemming and Lemmatization. 
@@ -638,13 +616,6 @@ for fname in os.listdir():
 # 
 # * Case Normalization is a very simple process to do, though it is indeed very effective. 
 # The above is a very simple example (consisting of a very short paragraph) and it might not show much reduction on the vocabulary size. Imagine if you have a large corpus, doing case normalization will significantly reduce the vocabulary size, and thus helps the analysis algorithms to focus on different meaning of tokens rather than its cases.
-
-# In[ ]:
-
-
-print("Number of distinct words BEFORE further pre-processing:",len(set(description)))
-print("Number of distinct words AFTER further pre-processing:",len(set(tk_description)))
-
 
 # > # Discussion
 # >>In some of the text analysis tasks, we have to be mindful in the process of stopword removal. 
