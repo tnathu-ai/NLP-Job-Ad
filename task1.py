@@ -14,7 +14,7 @@
 # 
 # Environment: Python 3 and Jupyter notebook
 # 
-# Libraries used: please include all the libraries you used in your assignment, e.g.,:
+# Libraries used: 
 # * sklearn
 # * collections
 # * re
@@ -185,7 +185,7 @@ def decode(l):
 
 # decode the binary description into utf-8 form and save it to full_description
 full_description = decode(full_description)
-type(full_description)
+full_description[emp]
 
 
 # ### ---------------> OBSERVATION:
@@ -305,8 +305,8 @@ def stats_print(tk_description):
     print("Total number of description:", len(tk_description))
     lens = [len(article) for article in tk_description]
     print("Average description length:", np.mean(lens))
-    print("Maximun description length:", np.max(lens))
-    print("Minimun description length:", np.min(lens))
+    print("Maximum description length:", np.max(lens))
+    print("Minimum description length:", np.min(lens))
     print("Standard deviation of description length:", np.std(lens))
 
 stats_print(tk_description)
@@ -322,7 +322,7 @@ stats_print(tk_description)
 
 words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
 word_counts = Counter(words) # count the number of times each word appears in the corpus
-print("Number of words that appear only once:", len([w for w in word_counts if word_counts[w] == 1]))
+print("Number of words that appear less than 2:", len([w for w in word_counts if word_counts[w] <= 1]))
 
 
 # In[ ]:
@@ -333,6 +333,10 @@ list(chain.from_iterable(st_list)) # merge them together in one list
 
 # filter out single character tokens
 tk_description = [[w for w in description if len(w) >=2]                       for description in tk_description]
+
+words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
+word_counts = Counter(words) # count the number of times each word appears in the corpus
+print("Number of words that appear less than 2:", len([w for w in word_counts if word_counts[w] <= 1]))
 
 
 # In[ ]:
@@ -388,21 +392,21 @@ stats_print(tk_description)
 # Recall, from the beginning, we have the following:  
 # _____________________________________________
 # 
-# Vocabulary size:  9423
+# Vocabulary size:  9834
 # 
-# Total number of tokens:  107751
+# Total number of tokens:  186952
 # 
-# Lexical diversity:  0.08745162457889022
+# Lexical diversity:  0.052601737344345076
 # 
 # Total number of description: 776
 # 
-# Average description length: 138.85438144329896
+# Average description length: 240.91752577319588
 # 
-# Maximun description length: 489
+# Maximun description length: 815
 # 
-# Minimun description length: 12
+# Minimun description length: 13
 # 
-# Standard deviation of description length: 73.42099464751045
+# Standard deviation of description length: 124.97750685071483
 # _____________________________________________
 # 
 # We've shrunk more than 40% of the vocabulary.
@@ -537,9 +541,21 @@ for fname in os.listdir():
 
 
 # ## Summary
-# Give a short summary and anything you would like to talk about the assessment task here.
+# 
+# In this activity, we have demonstrated the basic text pre-processing steps of sentence segmentation and tokenization. 
+# There are a couple of things that we should keep in mind:
+# 
+# * How we should process the text depends on the downstream analysis. Before we do any pre-processing, we should decide on the scope of the text to be used in the downstream analysis task. For instance, should we use an entire document? Or should we break the document down into sections, paragraphs, or sentences. Take another example. If we are analysing emails, should we keep the headers information? or should we focus on the email body? Choosing the proper scope depends on the goals of the analysis task. For example, you might choose to use an entire document in document classification and clustering tasks while one might choose smaller units like paragraphs or sentences in document summarization and information retrieval tasks. The scope chosen will have an  impact on the steps needed in the pre-processing process.
+# 
+# * In this activity, we have shown you multiple ways to do tokenization. However, there is no single right way to do tokenization.  It completely depends on the corpus and the text analysis task you are going to perform. The major question of the tokenization phase is what counts as a token. In some of the text analysis task. Although word tokenization is relatively easy compared with other NLP or text mining task, errors made in this phase will propagate into later analysis and cause problems.
 
 # # Reference
+# [1] Sentence boundary disambiguation. https://en.wikipedia.org/wiki/Sentence_boundary_disambiguation
+# [2] Tokenization. https://nlp.stanford.edu/IR-book/html/htmledition/tokenization-1.html  
+# [3] Your Guide to Natural Language Processing (NLP). https://towardsdatascience.com/your-guide-to-natural-language-processing-nlp-48ea2511f6e1  
+# [4] Introduction to Natural Language Processing for Text. https://towardsdatascience.com/introduction-to-natural-language-processing-for-text-df845750fb63  
+# [5] [Accessing Text Corpora and Lexical Resources](http://www.nltk.org/book/ch02.html): Chapter 2 of "Natural Language Processing with Python" By Steven Bird, Ewan Kelin & Edward Loper.  
+# [6]. [Corpus Readers](http://www.nltk.org/howto/corpus.html#tagged-corpora): An NLTK tutorial on accessing the contents of a diverse set of corpora.
 
 # In[ ]:
 
