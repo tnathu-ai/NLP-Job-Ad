@@ -38,6 +38,8 @@
 # Nowadays there are many job hunting websites including seek.com.au and au.indeed.com. These job hunting sites all manage a job search system, where job hunters could search for relevant jobs based on keywords, salary, and categories. In previous years, the category of an advertised job was often manually entered by the advertiser (e.g., the test_indexloyer). There were mistakes made for category assignment. As a result, the jobs in the wrong class did not get enough exposure to relevant candidate groups.
 # With advances in text analysis, automated job classification has become feasible; and sensible suggestions for job categories can then be made to potential advertisers. This can help reduce human data entry error, increase the job exposure to relevant candidates, and also improve the user experience of the job hunting site. In order to do so, we need an automated job ads classification system that helps to predict the categories of newly entered job advertisements.
 # 
+# NLP uses a hierarchy to determine which groups of words and sentences belong to each other. The smallest level of text is a token which can be a sentence or an individual word. A group of tokens is called a document, for instance each text file containing job description. A group of documents is called a corpus, in this case the job category folder which containng several job adverisement files inside . Finally, a group of corpus is called a corpora, which can be several job categories we wish to compare and evaluate.
+# 
 # In this **task1** notebook, we are going to explore a job advertisement data set, and focus on pre-processing the description only.
 # In the next task **task2_3**, we will then use the pre-processed text reviews to generate data features and build classification models to predict label of the description.
 # 
@@ -51,8 +53,11 @@
 
 # ## Importing libraries 
 
-# In[1]:
+# In[ ]:
 
+
+import nltk
+nltk.download('punkt')
 
 # import libraries
 import numpy as np
@@ -66,7 +71,7 @@ import re
 import os
 
 
-# In[2]:
+# In[ ]:
 
 
 # check the version of the main packages
@@ -117,7 +122,7 @@ get_ipython().system(' python --version')
 # - Extract webIndex and description into proper data structures.
 # 
 
-# In[3]:
+# In[ ]:
 
 
 # load each folder and file inside the data folder
@@ -126,20 +131,20 @@ df = load_files(r"data")
 print(f'Data type of the loaded data and labels using sklearn API: {type(df)}')
 
 
-# In[4]:
+# In[ ]:
 
 
 df['target'] # this corresponding to the index value of the 4 categories
 
 
-# In[5]:
+# In[ ]:
 
 
 # Name of the categories
 df['target_names'] # this corresponding to the name value of the 4 categories
 
 
-# In[6]:
+# In[ ]:
 
 
 # loop through the index of the target_names and print the category name
@@ -151,7 +156,7 @@ for i in range(len(df['target_names'])):
 # 
 # `test_index` is a number to test whether the attribute at that position matches the desired outputs. So we don't need to print to whole lengthly output each test and void memory problems
 
-# In[7]:
+# In[ ]:
 
 
 test_index = 20 # an example to test for the whole task outputs.
@@ -162,7 +167,7 @@ df['filenames'][test_index], df['target'][test_index]
 # ### --------------> OBSERVATION
 # from the file path and the label we know that it's the correct label too
 
-# In[8]:
+# In[ ]:
 
 
 # assign variables
@@ -179,7 +184,7 @@ print(f'Job description: {full_description[test_index]}\n\nCorresponding to the 
 # 
 # ### Decode the description
 
-# In[9]:
+# In[ ]:
 
 
 def decode(l):
@@ -223,7 +228,7 @@ full_description[test_index]
 # 
 # ## 1.2.1 Extract information from each job advertisement
 
-# In[10]:
+# In[ ]:
 
 
 # Extract description, title, webindex,  from each job advertisement and test using test_index
@@ -260,7 +265,7 @@ print(f'Job company at index {test_index}:\n{company[test_index]}\n')
 # ## 1.2.2 + 1.2.3 
 # ## Tokenize description using regular expression & lowercase all words
 
-# In[11]:
+# In[ ]:
 
 
 def tokenizeDescription(raw_description):
@@ -300,7 +305,7 @@ print("The original number of Tokenized description tokens: ",len(tk_description
 # 
 # In the following, we wrap all these up as a function, since we will use this printing module later to compare these statistic values before and after pre-processing.
 
-# In[12]:
+# In[ ]:
 
 
 def stats_print(tk_description):
@@ -323,7 +328,7 @@ stats_print(tk_description)
 # ## Task 1.2.4 Remove words with length less than 2.
 # remove any token that only contains a single character (a token that of length less than 2).
 
-# In[13]:
+# In[ ]:
 
 
 words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
@@ -343,7 +348,7 @@ print("After removing, the number of words that appear less than 2:", len([w for
 # 
 # Remove the stop words from the tokenized text inside `stopwords_en.txt` file
 
-# In[14]:
+# In[ ]:
 
 
 # remove the stop words inside `stopwords_en.txt` from the tokenized text
@@ -360,15 +365,7 @@ print(f'The number of stop words inside {stopwords_file} is {len(stop_words)} in
 # 
 # + Note this this is just one of the lists and we test_indexhasize that there is no universal list of stop words. 
 
-# In[15]:
-
-
-# check which words inside the description also inside inside `stopwords_en.txt`
-filtered_tokens_test_index = [[token for token in description if token in stop_words] for description in tk_description[test_index]]
-filtered_tokens_test_index
-
-
-# In[16]:
+# In[ ]:
 
 
 # flitering stop words
@@ -383,7 +380,7 @@ tk_description = [[token for token in description if token not in stop_words] fo
 print("The number of tokens in the test_index index description AFTER removing stop words:",len(tk_description[test_index]))
 
 
-# In[17]:
+# In[ ]:
 
 
 # should I filter this?
@@ -397,7 +394,7 @@ print("The number of tokens in the test_index index description AFTER removing s
 # 
 # We first need to find out the set of less frequent words by using the `hapaxes` function applied on the **term frequency** dictionary. 
 
-# In[18]:
+# In[ ]:
 
 
 from nltk.probability import *
@@ -412,7 +409,7 @@ print(f'The number of words that appear only once in the entire corpus {len(less
 lessFreqWords
 
 
-# In[19]:
+# In[ ]:
 
 
 def removeLessFreqWords(description):
@@ -425,7 +422,7 @@ stats_print(tk_description)
 
 # ## Task 1.2.7 Remove the top 50 most frequent words based on document frequency.
 
-# In[20]:
+# In[ ]:
 
 
 words = list(chain.from_iterable([set(description) for description in tk_description]))
@@ -434,7 +431,29 @@ top50MostFreqWords = doc_fd.most_common(50)
 top50MostFreqWords
 
 
-# In[21]:
+# ### --------> OBSERVATION:
+# 
+# Note that `FreqDist` returns a dictionary, in this context, it uses each unique token as a key, and the value is its corresponding number of occurrences/frequency.
+# 
+# The list above contains the 25 most frequent words.
+# You can see that it is mostly dominated by the stop words of the English language which have important grammatical roles.
+# Those words are articles, prepositions, pronouns, auxiliary webs, conjunctions, etc.
+# They are usually referred to as function words in linguistics, which tell us nothing about the meaning of the text.
+# 
+# Hmm~~ getting curious now, what proportion of the text is taken up with such words? &#129488;
+# We can generate a cumulative frequency plot for them
+# using  <font color="blue">fd.plot(25, cumulative=True)</font>.
+# If you set  <font color="blue">cumulative</font> to  <font color="blue">False</font>, 
+# it will plot the frequencies of these 25 words.
+# These 25 words account for about 30% (i.e. 250000/840083, where 840083 is the total number of tokens) of the entire BBC News article corpus.
+
+# In[ ]:
+
+
+doc_fd.plot(50, cumulative=True)
+
+
+# In[ ]:
 
 
 def removeMostFreqWords(description):
@@ -448,7 +467,7 @@ stats_print(tk_description)
 # ### The Updated Statistics
 # In the above, we have done all required pre-processed steps, now let's have a look at the statistics again:
 
-# In[22]:
+# In[ ]:
 
 
 # # specify
@@ -459,7 +478,8 @@ stats_print(tk_description)
 #                       for description in tk_description]
 
 
-print(f'The final statistic after pre-processing:\n{stats_print(tk_description)}')
+print(f'The final statistic description after pre-processing:\n')
+stats_print(tk_description)
 
 
 # **Recall, from the beginning, we have the following:**  
@@ -484,16 +504,16 @@ print(f'The final statistic after pre-processing:\n{stats_print(tk_description)}
 # 
 # We've shrunk more than 40% of the vocabulary.
 
-# ## Task 1.2.8 Save all job advertisement text and information in txt files (we will retrieve them. in task 2 and 3)
-# Save the vocabulary, bigrams and job advertisment txt as per spectification.
-# 
-# We are going to store all the preprocessed description texts and its corresponding labels into files for task 2.
+# ## Task 1.2.8 Save all job advertisement text and information in `.txt` files 
+# + we will retrieve them. in task 2 and 3
+# + Save the vocabulary, bigrams and job advertisment txt as per spectification.
+# + We are going to store all the preprocessed description texts and its corresponding labels into files for task 2.
 # * all the tokenized description are stored in a .txt file named `description.txt`
 #     * each line is a description text, which contained all the tokens of the description text, separated by a space ' '
 # * all the corresponding labels are store in a .txt file named `category.txt`
 #     * each line is a label (one of these 4 values: 0,1,2,3)
 
-# In[23]:
+# In[ ]:
 
 
 # save description text
@@ -538,8 +558,12 @@ print(f'Successfully saved title into {titleFilename}')
 # `vocab.txt`
 # 
 # This file contains the unigram vocabulary, one each line, in the following format: word_string:word_integer_index. Very importantly, words in the vocabulary must be sorted in alphabetical order, and the index value starts from 0. This file is the key to interpret the sparse encoding. For instance, in the following example, the word aaron is the test_index word (the corresponding integer_index as 19) in the vocabulary (note that the index values and words in the following image are artificial and used to demonstrate the required format only, it doesn't reflect the values of the actual expected output).
+# 
+# In the following, we also specify the format that we want the information to be displayed by specifying the formatting string:
+# 
+# `'%(word_string):%(word_integer_index)`. 
 
-# In[24]:
+# In[ ]:
 
 
 def write_vocab(vocab, filename):
@@ -557,7 +581,7 @@ write_vocab(vocab, 'vocab.txt')
 print(vocab[:10])
 
 
-# In[25]:
+# In[ ]:
 
 
 # loop through the index of the target_names and print the category name
@@ -565,14 +589,16 @@ for i in range(len(df['target_names'])):
     print(f'Category at index {i}: {df["target_names"][i]}')
 
 
-# In[26]:
+# In[ ]:
 
 
 # convert job ad to a dataframe
 job_ad = pd.DataFrame({'Title': title, 'Webindex': webindex, 'Company': company, 'Description': description,'Tokenized Description': tk_description, 'Category': category})
 
 # change Tokenized Description to string separated by space
-job_ad['Tokenized Description'] = job_ad['Tokenized Description'].apply(lambda x: ' '.join([str(i) for i in x]))
+# job_ad['Tokenized Description'] = job_ad['Tokenized Description'].apply(lambda x: ' '.join([str(i) for i in x]))
+job_ad['Tokenized Description'] = job_ad['Tokenized Description']
+
 
 # replace the value in Category column
 job_ad['Category'] = job_ad['Category'].replace([0,1,2,3],['Accounting_Finance','Engineering','Healthcare_Nursing','Sales'])
@@ -592,7 +618,7 @@ job_ad.head(3)
 
 # ### Convert all `.ipynb` notebooks in the same directory into `.py` files
 
-# In[27]:
+# In[ ]:
 
 
 # The .py format of the jupyter notebook
@@ -623,6 +649,8 @@ for fname in os.listdir():
 # For example, if we are performing a sentiment analysis, the word 'not', although is a stop word, it carries critical information, i.e. 'like' and 'not like' obviously are carrying completely reversed meaning.
 # We might fool out our algorithm off track if we remove a stop word like “not”. 
 # You should always carefully consider these conditions, design the list of "stop words" that are to removed based on your specific objectives.
+# 
+# >> we have build logistic regression models based our generated text features
 
 # <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.4 References</strong></h3>
 # 
