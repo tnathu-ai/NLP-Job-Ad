@@ -142,6 +142,9 @@ dmypy.json
 */.ipynb_checkpoints/*
 
 # large files
-bbcFT.model.wv.vectors_ngrams.npy/
-bbcFT.model.wv.vectors.npy/
+bbcFT.model.wv.vectors_ngrams.npy
+bbcFT.model.wv.vectors.npy
 bbcFT.model
+.model.wv.vectors_ngrams.npy
+.model.wv.vectors.npy
+.model
