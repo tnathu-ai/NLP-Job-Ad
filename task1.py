@@ -14,7 +14,7 @@
 # 
 # Environment: Python 3 and Jupyter notebook
 # 
-# Libraries used: 
+# Libraries used (please go to `requirements.txt` file for further details)
 # * sklearn
 # * collections
 # * re
@@ -23,13 +23,18 @@
 # * itertools
 # * pandas
 # * os
+# * pylab
+# * collections
 # 
 # ## Steps
 # + 1.1. Examining and loading data
 # 
 # + 1.2. Basic Text Pre-processing
 #     * 1.2.1. Extract information from each job advertisement. Perform the following pre-processing steps to the description of each job advertisement;
-#     * 1.2.2. Tokenize each job advertisement description. The word tokenization must use the following regular expression, r"[a-zA-Z]+(?:[-'][a-zA-Z]+)?";
+#     * 1.2.2. Tokenize each job advertisement description. The word tokenization must use the following regular expression:
+#     ```python
+#     pattern = r"[a-zA-Z]+(?:[-'][a-zA-Z]+)?" 
+#     ```
 #     * 1.2.3. All the words must be converted into the lower case;
 #     * 1.2.4. Remove words with length less than 2.
 #     * 1.2.5. Remove stopwords using the provided stop words list (i.e, stopwords_en.txt). It is located inside the same downloaded folder.
@@ -39,6 +44,8 @@
 #     * 1.2.9. Build a vocabulary of the cleaned job advertisement descriptions, save it in a txt file (please refer to the required output)
 #     
 # + 1.3. Summary
+# > * Discussion
+#       
 # + 1.4. References
 # 
 # 
@@ -61,6 +68,8 @@
 # 
 
 # ## Importing libraries & packages
+# 
+# Install packages to the local environment for the whole project with `pip install -r requirements.txt`
 
 # In[1]:
 
@@ -278,6 +287,10 @@ print(f'Job company at index {test_index}:\n{company[test_index]}\n')
 
 # ## 1.2.2 + 1.2.3 
 # ## Tokenize description using regular expression & lowercase all words
+# 
+# + Case normalization is easy to perform, but it is a highly powerful technique. It will greatly decrease the vocabulary size for a big corpus, allowing the analysis algorithms to concentrate on the diverse meanings of tokens rather than their situations.
+# 
+# + The same case with using regex only to extract the desired pattern that we only want meaningful words not slash, comma, etc. do not carry any meaning themself
 
 # In[11]:
 
@@ -324,7 +337,7 @@ print("The original number of Tokenized description tokens: ",len(tk_description
 # In[12]:
 
 
-Print("Intial text statistic:\n")
+print("Intial text statistic:\n")
 stats_print(tk_description)
 
 
@@ -460,16 +473,13 @@ ylabel('Word Frequency') # set y-axis caption
 grid(True) # make the bar chart grided, easier to view and compare
 
 
-# ### ------------> OBSERVATION
+# ### ------------> OBSERVATION:
 # 
 # The horizontal bar chart generated above shows how many word types occur with a certain frequency.
 # 
-# There are very small number (37) of types occurring over 200 times and therefore individually accounting for less than 1% of the vocabulary. 
+# There are very small number (37) of types occurring over 200 times and therefore individually accounting for less than 1% (37/9404) of the vocabulary. 
 # 
-# However, on the other extreme, more than 40% of the word types occur only once in the corpus.
-# Note that the majority of word types occur quite infrequently given the size of the whole corpus (i.e. about 400 k tokens): about 80% of the word types occur 10 times or less. 
-# Similarly, we can also look at the bar chart based on the term frequency. We again leave this one for we to try by werself!
-# 
+# However, on the other extreme, about 50% (4643/9404) of the word types occur only once in the corpus.
 
 # ## Task 1.2.6 Remove the word that appears only once in the document collection, based on term frequency
 # 
@@ -510,12 +520,14 @@ term_fd = FreqDist(words) # compute term frequency for each unique word/type
 # Using hapaxes() to see less frequent words in term frequency
 lessFreqWords = set(term_fd.hapaxes())
 print(f'The number of words that appear only once in the entire corpus is: {len(lessFreqWords)}\n')
+
+# test
 lessFreqWords
 
 
 # ### -------> OBSERVATION:
 # 
-# Most of the words do not carry any meaning which indicates maybe typo inside the description
+# Most of the words do not carry any meaning which indicates maybe typos inside the description we might fix it or in this case I would eliminate it
 
 # In[19]:
 
@@ -542,41 +554,30 @@ top50MostFreqWords
 
 # ### --------> OBSERVATION:
 # 
-# Note that `FreqDist` returns a dictionary, in this context, it uses each unique token as a key, and the value is its corresponding number of occurrences/frequency.
+# Each unique token is a key, and the value is its corresponding frequency. The list above contains the 50 most frequent words. We can see that it is mostly dominated by the stop words of the English language, which occurs in most job descriptions making it cliché, which tells us nothing about the meaning of the text.
 # 
-# The list above contains the 25 most frequent words.
-# we can see that it is mostly dominated by the stop words of the English language which have important grammatical roles.
-# Those words are description, prepositions, pronouns, auxiliary webs, conjunctions, etc.
-# They are usually referred to as function words in linguistics, which tell us nothing about the meaning of the text.
-# 
-# https://matplotlib.org/stable/api/_as_gen/matplotlib.lines.Line2D.html
-# Hmm~~ getting curious now, what proportion of the text is taken up with such words? &#129488;
-# We can generate a cumulative frequency plot for them
-# using  <font color="blue">fd.plot(25, cumulative=True)</font>.
-# If we set  <font color="blue">cumulative</font> to  <font color="blue">False</font>, 
-# it will plot the frequencies of these 25 words.
-# These 50 words account for about 13% (i.e. 13000/102975, where 102975 is the total number of tokens) of the entire Job Ad corpus.
+# #### Cumulative Frequency Plot
+# We use [matplotlib.lines.Line2D](https://matplotlib.org/stable/api/_as_gen/matplotlib.lines.Line2D.html)
+# to generate a cumulative frequency plot for proportion of the text <font color="pink"><b>fd.plot(50, cumulative=True)</b></font>. These 50 words account for about 13% (i.e., 13000/102975, where 102975 is the total number of tokens) of the entire Job Ad corpus.
 
 # In[21]:
 
 
+# cumulative frequency plot for most common 50 words
 doc_fd.plot(50, cumulative=True, color='pink')
 
 
 # ### -----------> OBSERVATION:
 # 
-# From the previous print out of the most frequent words, we can see there might be some words that occur quite useful
+# From the previous printout of the most frequent words, we can see there might be some quite useful words. Before we decide to remove those words from our vocabulary, it might be worth checking what those words mean and the context of those words. 
 # 
-# Before we decide to remove those words from our vocabulary, it might be worth checking what those words mean and the context of those words. 
-# 
-# Fortunately NLTK provides a concordance function in the `nltk.text` module. 
-# A concordance view shows us every occurrence of a given word, together with the corresponding context. For example,
+# Fortunately, NLTK provides a concordance function in the `nltk.text` module. A **concordance** view shows us every occurrence of a given the word, together with the corresponding context. For example:
 
 # In[22]:
 
 
 textList = nltk.Text(words) # Create the text of tokens
-textList.concordance('uk') # shows the concordance view of the token 'said'
+textList.concordance('training') # shows the concordance view of the token 'said'
 
 
 # In[23]:
@@ -603,38 +604,39 @@ stats_print(tk_description)
 # **Recall, from the beginning, we have the following:**  
 # _____________________________________________
 # 
-# Vocabulary size:  9834
-# 
-# Total number of tokens:  186952
-# 
-# Lexical diversity:  0.052601737344345076
-# 
-# Total number of description: 776
-# 
-# Average description length: 240.91752577319588
-# 
-# Maximun description length: 815
-# 
-# Minimun description length: 13
-# 
-# Standard deviation of description length: 124.97750685071483
+# + Vocabulary size:  9834
+# + Total number of tokens:  186952
+# + Lexical diversity:  0.052601737344345076
+# + Total number of description: 776
+# + Average description length: 240.91752577319588
+# + Maximum description length: 815
+# + Minimum description length: 13
+# + Standard deviation of description length: 124.97750685071483
 # _____________________________________________
 # 
-# **We've shrunk more than 40% of the vocabulary.**
 # 
-# * The total number of tokens across the corpus
-# * The total number of types across the corpus, i.e., the size of vocabulary 
-# * The so-called [lexical diversity](https://en.wikipedia.org/wiki/Lexical_diversity) refers to the ratio of different unique word stems (types) to the total number of words (tokens).  
-# * The average, minimum, and the maximum number of the token (i.e., document length) in the dataset.
+# ### ------------> OBSERVATION:
+# 
+# **We've shrunk more than 53% of vocabulary size (number of types across the corpus).**
+# 
+# * The total number of tokens across the corpus shrunk by more than 55%
+# * The ratio of different unique words stems from a significantly reduced total number of tokens.  
+# * The average number of the token (i.e., document length) in the dataset shrunk by more than 55%
+# * The maximum Maximum description length decreases by about 58%
+# * The minimum description length increases by 7.7%
+# * The Standard deviation of description length shrunk by about 56%
 
-# ## Task 1.2.8 Save all job advertisement text and information in `.txt` files 
-# + we will retrieve them. in task 2 and 3
-# + Save the vocabulary, bigrams and job advertisment txt as per spectification.
-# + We are going to store all the preprocessed description texts and its corresponding labels into files for task 2.
-# * all the tokenized description are stored in a .txt file named `description.txt`
-#     * each line is a description text, which contained all the tokens of the description text, separated by a space ' '
-# * all the corresponding labels are store in a .txt file named `category.txt`
+# ## Task 1.2.8 Save all job advertisement text and information 
+# + Save the vocabulary, bigrams, and job advertisement txt format.
+# + We are going to store all the preprocessed description texts and their corresponding labels into files for task 2.
+# 
+# #### `.txt` files
+# * `description.txt`: all the tokenized descriptions are stored in a .txt file
+#     * each line is a description text, which contains all the tokens of the description text, separated by a space ' '
+# * `category.txt`: All the corresponding labels are stored in a .txt file
 #     * each line is a label (one of these 4 values: 0,1,2,3)
+# * `title.txt`: All the corresponding titles are stored in a .txt file
+#     * each line is a title
 
 # In[25]:
 
@@ -642,7 +644,8 @@ stats_print(tk_description)
 # save description text
 def save_description(descriptionFilename,tk_description):
     out_file = open(descriptionFilename, 'w') # creates a txt file and open to save the descriptions
-    string = "\n".join([" ".join(description) for description in tk_description])
+    # join the tokens in an description with space, and write the obtained string to the txt document
+    string = "\n".join([" ".join(description) for description in tk_description]) 
     out_file.write(string)
     out_file.close() # close the file
 
@@ -676,35 +679,11 @@ save_title(titleFilename,title)
 print(f'Successfully saved title into {titleFilename}')
 
 
-# ## Task 1.2.9 Build a vocabulary of the cleaned job advertisement descriptions
-# 
-# `vocab.txt`
-# 
-# This file contains the unigram vocabulary, one each line, in the following format: word_string:word_integer_index. Very importantly, words in the vocabulary must be sorted in alphabetical order, and the index value starts from 0. This file is the key to interpret the sparse encoding. For instance, in the following example, the word aaron is the test_index word (the corresponding integer_index as 19) in the vocabulary (note that the index values and words in the following image are artificial and used to demonstrate the required format only, it doesn't reflect the values of the actual expected output).
-# 
-# In the following, we also specify the format that we want the information to be displayed by specifying the formatting string:
-# 
-# `'%(word_string):%(word_integer_index)`. 
+# #### `.csv` file
+# * `job_ad.csv`: store information into a Dataframe and save into a CSV file
+#     * the dataframe contains 776 observations and 6 attributes including `Title`, `Webindex`, `Company`, `Description`, `Tokenized Description`,`Category`
 
 # In[26]:
-
-
-def write_vocab(vocab, filename):
-    with open(filename, 'w') as f:
-        for i, word in enumerate(vocab):
-            f.write(word + ':' + str(i) + '\n')
-            
-# convert tokenized description into a alphabetically sorted list
-vocab = sorted(list(set(chain.from_iterable(tk_description))))
-
-# save the sorted vocabulary list into a file according to the required format
-write_vocab(vocab, 'vocab.txt')
-
-# print out the first 10 words in the vocabulary to test
-print(vocab[:10])
-
-
-# In[27]:
 
 
 # loop through the index of the target_names and print the category name
@@ -712,7 +691,7 @@ for i in range(len(df['target_names'])):
     print(f'Category at index {i}: {df["target_names"][i]}')
 
 
-# In[28]:
+# In[27]:
 
 
 # convert job ad to a dataframe
@@ -737,58 +716,62 @@ print(job_ad.info())
 job_ad.head(3)
 
 
+# ## Task 1.2.9 Build a vocabulary of the cleaned job advertisement descriptions
+# 
+# `vocab.txt`
+# 
+# This file contains the unigram vocabulary, one each line, in the following format: `word_string:word_integer_index` sorted in **alphabetical order**, and the **index value starts from 0**. This file is the key to interpreting sparse encoding. For instance, in the following example, the word `benefit` is the word_string word (the corresponding integer_index as 4) in the vocabulary. 
+
+# In[28]:
+
+
+def write_vocab(vocab, filename):
+    with open(filename, 'w') as f:  # creates a txt file open in write mode
+        for i, word in enumerate(vocab):
+            # write each index and vocabulary word, note that index start from 0
+            f.write(word + ':' + str(i) + '\n')
+            
+# convert tokenized description into a alphabetically sorted list
+vocab = sorted(list(set(chain.from_iterable(tk_description))))
+
+# save the sorted vocabulary list into a file according to the required format
+write_vocab(vocab, 'vocab.txt')
+
+# print out the first 10 words in the vocabulary to test
+print(vocab[:10])
+
+
 # ### [Convert all `.ipynb` notebooks in the same directory into `.py` files](https://nbconvert.readthedocs.io/en/latest/usage.html#reveal-js-html-slideshow)
 
-# In[37]:
+# In[ ]:
 
+
+get_ipython().system('pip install pandoc')
 
 # The .py format of the jupyter notebook
 for fname in os.listdir():
     if fname.endswith('.ipynb'):
         os.system(f'jupyter nbconvert {fname} --to script')
-
-
-# In[30]:
-
-
-# # Saving the Tokenised Text
-# out_file = open("./bbcNews.txt", 'w') # creates a txt file named './bbcNews.txt', open in write mode
-# for description in tokenised_description:
-#     out_file.write(' '.join(description) + '\n') # join the tokens in an description with space, and write the obtained string to the txt document
-# out_file.close() # close the file
-
-# # saving the vocab
-# out_file = open("./bbcNews_voc.txt", 'w') # creates a txt file named './bbcNews_voc.txt', open in write mode
-
-# for ind in range(0, len(vocab)):
-#     out_file.write("{},{}\n".format(ind,vocab[ind])) # write each index and vocabulary word, note that index start from 0
-# out_file.close() # close the file
+        os.system(f'jupyter nbconvert {fname} --to pdf')
 
 
 # <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.3 Summary</strong></h3>
 # 
-# We have demonstrated the basic text pre-processing steps of sentence segmentation and tokenization. 
-# There are a couple of things that we should keep in mind:
+# We have demonstrated the basic text pre-processing steps of sentence segmentation and tokenization. We have covered the fundamentals of text pre-processing steps: 
+# > + Case Normalization, 
+# > + Stop Word Removing, 
+# > + Words base on term frequency and document frequency Removing, 
+# > + Regex Tokenization
 # 
-# * we have covered the fundamentals of text pre-processing steps of Case Normalization, Stop Word Removing, Stemming and Lemmatization. 
-# 
-# * As mentioned before, though these steps are doing very different things to the text we have, however, one common effect among them, is the reduction on the size of the vocabulary (the list of distinct words contained in the corpus). 
-# 
-# * How we should process the text depends on the downstream analysis. Before we do any pre-processing, we should decide on the scope of the text to be used in the downstream analysis task. For instance, should we use an entire document? Or should we break the document down into sections, paragraphs, or sentences. Take another example. If we are analysing emails, should we keep the headers information? or should we focus on the email body? Choosing the proper scope depends on the goals of the analysis task. For example, we might choose to use an entire document in document classification and clustering tasks while one might choose smaller units like paragraphs or sentences in document summarization and information retrieval tasks. The scope chosen will have an  impact on the steps needed in the pre-processing process.
-# 
-# * In this activity, we have shown we multiple ways to do tokenization. However, there is no single right way to do tokenization.  It completely depends on the corpus and the text analysis task we are going to perform. The major question of the tokenization phase is what counts as a token. In some of the text analysis task. Although word tokenization is relatively easy compared with other NLP or text mining task, errors made in this phase will propagate into later analysis and cause problems.
-# 
-# * Case Normalization is a very simple process to do, though it is indeed very effective. 
-# The above is a very simple example (consisting of a very short paragraph) and it might not show much reduction on the vocabulary size. Imagine if we have a large corpus, doing case normalization will significantly reduce the vocabulary size, and thus helps the analysis algorithms to focus on different meaning of tokens rather than its cases.
+# There is no one ideal approach to text pre-processing. It all relies on the corpus and the type of text analysis we're going to do. What qualifies as a token is the main concern of the tokenization process—some text analysis tasks. As previously noted, even if these actions have varied effects on the text, they all have one thing in common: they all result in smaller vocabulary sizes.
 
 # > # Discussion
-# >>In some of the text analysis tasks, we have to be mindful in the process of stopword removal. 
-# In some scenarios, stop words removal can wipe out relevant information and modify the context in a given sentence. 
-# For example, if we are performing a sentiment analysis, the word 'not', although is a stop word, it carries critical information, i.e. 'like' and 'not like' obviously are carrying completely reversed meaning.
-# We might fool out our algorithm off track if we remove a stop word like “not”. 
-# we should always carefully consider these conditions, design the list of "stop words" that are to removed based on wer specific objectives.
 # 
-# >> we have build logistic regression models based our generated text features
+# >> * The stopword removal technique requires extra consideration of **negative sentences**. In some cases, removing stop words from a phrase might eliminate important details and change the statement's context. For instance, while conducting a sentiment analysis, the term "not," despite being a stop word, contains crucial information because "do" and "not do" clearly have radically different meanings. Failure to eliminate the stop word might ruin the purpose of the whole context and confuse the algorithm. We must constantly carefully analyze these circumstances and build our list of "stop phrases" to be eliminated to fit our goals.
+# 
+# >> * For larger data sizes, it is highly recommended to reduce the vocabulary size further to either **Stemming or Lemmatization** of the words to their roots.
+# 
+# >> * The downstream analysis will determine how we should treat the text. Should we pre-process the `title` information if we put it into the classification model? Or ought we only concentrate on the `description` itself? Based on the analytical work's objectives, we can choose the appropriate downstream analysis task. For instance, we may use the whole document when doing tasks like document classification and clustering. In contrast, performing functions like document summary and information retrieval, a smaller unit, such as a paragraph or phrase, may be used.
 
 # <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.4 References</strong></h3>
 # 
@@ -802,9 +785,5 @@ for fname in os.listdir():
 # + [7] Stop words. https://en.wikipedia.org/wiki/Stop_word  
 # + [8] Bird, Steven, Edward Loper and Ewan Klein (2009), [Natural Language Processing with Python](http://www.nltk.org/book/). O’Reilly Media Inc.  
 # + [9] Convert script to Python file. https://nbconvert.readthedocs.io/en/latest/usage.html#reveal-js-html-slideshow
-
-# In[ ]:
-
-
-
-
+# + [10] matplotlib.lines.Line2D. https://matplotlib.org/stable/api/_as_gen/matplotlib.lines.Line2D.html
+# + [11] lexical diversity. https://en.wikipedia.org/wiki/Lexical_diversity
