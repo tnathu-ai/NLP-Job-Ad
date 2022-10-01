@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+from itertools import chain
 
 def stats_print(tk_description):
     words = list(chain.from_iterable(tk_description)) # we put all the tokens in the corpus in a single list
