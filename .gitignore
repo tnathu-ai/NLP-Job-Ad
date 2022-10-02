@@ -148,3 +148,5 @@ bbcFT.model
 .model.wv.vectors_ngrams.npy
 .model.wv.vectors.npy
 .model
+
+models/
