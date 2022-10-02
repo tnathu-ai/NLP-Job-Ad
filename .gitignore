@@ -149,4 +149,4 @@ bbcFT.model
 .model.wv.vectors.npy
 .model
 
-models/
+models/FastText/

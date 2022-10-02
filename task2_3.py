@@ -137,7 +137,9 @@ words = list(chain.from_iterable(tk_description)) # we put all the tokens in the
 vocab = sorted(list(set(words))) # compute the vocabulary by converting the list of words/tokens to a set, i.e., giving a set of unique words
 
 len(vocab)
-
+print(f'The number of the category: {len(category)}')
+print(f'The number of the description: {len(tk_description)}')
+print(f'The number of the unique vocabulary: {len(category)}')
 
 # <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>Task 2. Generating Feature Representations</strong></h3>
 # 
@@ -149,24 +151,14 @@ len(vocab)
 from collections import Counter
 
 """
-Bag-of-words model:
+Bag-of-words model using CountVectorizer
 Generate the Count vector representation for each job advertisement description, and save
 them into a file (please refer to the required output). Note, the generated Count vector
 representation must be based on the generated vocabulary in Task 1 (as saved in vocab.txt).
 """
-# bag of words model
-def bag_of_words(description, vocab):
-    # create a list of 0s with the same length as the vocab
-    bow = [0] * len(vocab)
-    # count the number of times each word appears in the description
-    word_counts = Counter(description)
-    # update the bow list with the word counts
-    for word, count in word_counts.items():
-        bow[vocab.index(word)] = count
-    return bow
+cVectorizer = CountVectorizer(analyzer = "word",vocabulary = vocab) # initialised the CountVectorizer
+count_features = cVectorizer.fit_transform(joined_description).toarray()
 
-# Generate the Count vector representation for each job advertisement description
-bow = [bag_of_words(description, vocab) for description in tk_description]
 
 
 # ## 2.1 Saving outputs
@@ -174,6 +166,17 @@ bow = [bag_of_words(description, vocab) for description in tk_description]
 # - `count_vectors.txt`
 # 
 # `count_vectors.txt` stores the sparse count vector representation of job advertisement descriptions in the following format. Each line of this file corresponds to one advertisement. It starts with a ‘#’ key followed by the webindex of the job advertisement, and a comma ‘,’. The rest of the line is the sparse representation of the corresponding description in the form of word_integer_index:word_freq separated by comma. Following is an example of the file format.
+def save_count_vector(count_features, webindex, filename):
+    with open(filename, 'w') as f:
+        for i in range(len(count_features)):
+            f.write('#' + str(webindex[i]) + ',')
+            for j in range(len(count_features[i])):
+                if count_features[i][j] != 0:
+                    f.write(str(j) + ':' + str(count_features[i][j]) + ',')
+            f.write('\n')
+    f.close()
+    print('Count vector representation saved to ' + filename)
+
 
 # In[19]:
 
