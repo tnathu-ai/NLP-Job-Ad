@@ -10,7 +10,6 @@ import numpy as np
 import warnings
 warnings.filterwarnings('ignore')
 
-%matplotlib inline
 # set desired matplotlib gloabal figure size
 plt.rcParams["figure.figsize"] = (20,10)
 
@@ -95,7 +94,16 @@ def plotTSNE(labels,features): # features as a numpy array, each element of the 
     plt.legend()
     plt.show()
     
-    
+# Saving the Vector Representation
+def write_vectorFile(data_features,filename):
+    num = data_features.shape[0] # the number of document
+    out_file = open(filename, 'w') # creates a txt file and open to save the vector representation
+    for a_ind in range(0, num): # loop through each article by index
+        for f_ind in data_features[a_ind].nonzero()[1]: # for each word index that has non-zero entry in the data_feature
+            value = data_features[a_ind][0,f_ind] # retrieve the value of the entry from data_features
+            out_file.write("{}:{} ".format(f_ind,value)) # write the entry to the file in the format of word_index:value
+        out_file.write('\n') # start a new line after each article
+    out_file.close() # close the file    
     
     
 # tsne plot for below word
@@ -165,3 +173,7 @@ def tsne_plot_word(for_word, w2v_model):
     plt.ylim(Y[:, 1].min()-50, Y[:, 1].max()+50)
  
     plt.title('t-SNE visualization for word "{}'.format(for_word.title()) +'"')
+    
+    
+    
+    

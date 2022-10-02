@@ -465,7 +465,10 @@ def read_vocab(vocab_file):
         for line in f:
             (word, index) = line.split(':')
             vocab[word.strip()] = int(index)
-    return vocab
+            # swap the key and value of the dictionary
+    return {v: k for k, v in vocab.items()}
+
+
 
 # Generates the w_index:word dictionary
 voc_fname = 'vocab.txt'
@@ -989,6 +992,15 @@ X_train, X_test, y_train, y_test,train_indices,test_indices = train_test_split(b
 model = LogisticRegression(max_iter = 1000,random_state=seed)
 model.fit(X_train, y_train)
 model.score(X_test, y_test)
+
+
+models = [weighted_bbcFT_company,weighted_bbcFT_title,weighted_bbcFT_description]
+model_names = ["Weighted Pretrained FastText with Company", "Weighted Pretrained FastText with Title", "Weighted Pretrained FastText with Description"]
+# loop through the models and report the results
+for i in range(0,len(models)):
+    model = models[i]
+    model.fit(X_train, y_train)
+    print(model_names[i] + " Accuracy: " + str(model.score(X_test, y_test)))
 
 
 # In[40]:
