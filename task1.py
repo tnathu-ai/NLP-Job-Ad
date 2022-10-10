@@ -78,12 +78,8 @@ import nltk
 nltk.download('punkt')
 
 from sklearn.datasets import load_files
-from collections import Counter
 from nltk import RegexpTokenizer
 from nltk.tokenize import sent_tokenize
-from itertools import chain
-from matplotlib import pyplot as plt
-from nltk.corpus import brown
 from nltk import FreqDist
 from pylab import *
 
@@ -316,7 +312,14 @@ def tokenizeDescription(raw_description):
     tokenised_description = list(chain.from_iterable(token_lists))
     return tokenised_description
 
-tk_description = [tokenizeDescription(r) for r in description]  # list comprehension, generate a list of tokenized description
+# list comprehension, generate a list of tokenized description
+tk_description = [tokenizeDescription(r) for r in description] 
+
+# I also want a list of tokenized title for task 3
+tk_title = [tokenizeDescription(r) for r in title] 
+
+# I also want a list of tokenized company for task 3
+tk_company = [tokenizeDescription(r) for r in company] 
 
 # print out to test
 print("Raw description:\n",description[test_index],'\n')
@@ -695,15 +698,15 @@ for i in range(len(df['target_names'])):
 
 
 # convert job ad to a dataframe
-job_ad = pd.DataFrame({'Title': title, 'Webindex': webindex, 'Company': company, 'Description': description,'Tokenized Description': tk_description, 'Category': category})
+job_ad = pd.DataFrame({'Webindex': webindex, 'Title': title, 'Tokenized Title': tk_title, 'Company': company, 'Tokenized Company': tk_company, 'Description': description,'Tokenized Description': tk_description, 'Category': category})
 
-# add column Tokenized Description
+# updated column Tokenized Description
 job_ad['Tokenized Description'] = job_ad['Tokenized Description']
 
-# add column & replace the value in Category 
+# updated column & replace the value in Category 
 job_ad['Category'] = job_ad['Category'].replace([0,1,2,3],['Accounting_Finance','Engineering','Healthcare_Nursing','Sales'])
 
-# add column & cast Webindex to int
+# updated column & cast Webindex to int
 job_ad['Webindex'] = job_ad['Webindex'].astype(int)
 
 # save job ad to csv file
@@ -743,16 +746,13 @@ print(vocab[:10])
 
 # ### [Convert all `.ipynb` notebooks in the same directory into `.py` files](https://nbconvert.readthedocs.io/en/latest/usage.html#reveal-js-html-slideshow)
 
-# In[ ]:
+# In[29]:
 
 
-get_ipython().system('pip install pandoc')
-
-# The .py format of the jupyter notebook
-for fname in os.listdir():
-    if fname.endswith('.ipynb'):
-        os.system(f'jupyter nbconvert {fname} --to script')
-        os.system(f'jupyter nbconvert {fname} --to pdf')
+# # The .py format of the jupyter notebook
+# for fname in os.listdir():
+#     if fname.endswith('.ipynb'):
+#         os.system(f'jupyter nbconvert {fname} --to script')
 
 
 # <h3 style="color:#ffc0cb;font-size:50px;font-family:Georgia;text-align:center;"><strong>1.3 Summary</strong></h3>
@@ -762,6 +762,8 @@ for fname in os.listdir():
 # > + Stop Word Removing, 
 # > + Words base on term frequency and document frequency Removing, 
 # > + Regex Tokenization
+# 
+# We also performed basic text pre-processing for title and company for task 3
 # 
 # There is no one ideal approach to text pre-processing. It all relies on the corpus and the type of text analysis we're going to do. What qualifies as a token is the main concern of the tokenization process—some text analysis tasks. As previously noted, even if these actions have varied effects on the text, they all have one thing in common: they all result in smaller vocabulary sizes.
 
