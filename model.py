@@ -9,7 +9,7 @@
 # 
 # ## The Dataset
 # Same as in the previous activity, the document collection that we are going to use is the BBC News Dataset. For the origin of the dataset, please refer to [here](http://mlg.ucd.ie/datasets/bbc.html)
-# To be brief, the dataset consists of 2225 documents from the BBC news website corresponding to stories in five topical areas, i.e., class Labels (business, entertainment, politics, sport, tech).
+# To be brief, the dataset consists of 2225 documents from the BBC news website corresponding to stories in five topical areas, i.e., class Labels (Accounting_Finance, Engineering, Healthcare_Nursing, Sales, tech).
 # 
 # In this activity, instead of using the raw dataset, we will utilised the pre-processed clean dataset we saved in our previous Activity 3 Generating Feature Vectors.
 # Recall that at the end of Activity 3, we saved the pre-processed articles in a txt file named `bbcNews.txt`, where, each row is a document, with tokens seperated by whitespace.
@@ -754,7 +754,7 @@ Chelsea boss Thomas Tuchel has challenged Kai Havertz to show greater "hunger an
 impressed in a dominant victory at Crystal Palace.
 """
 
-# This is a sport news headline
+# This is a Sales news headline
 
 
 # In[78]:
