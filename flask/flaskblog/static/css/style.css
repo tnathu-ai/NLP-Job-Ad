@@ -1,7 +1,7 @@
 body {
   background: #fafafa;
   color: #333333;
-  margin-top: 5rem;
+  margin-top: 7rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -9,7 +9,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .bg-steel {
-  background-color: #FFB6C1;
+  background-color: #f2f0eb;
 }
 
 
@@ -89,9 +89,9 @@ a.job-title:hover {
 }
 
 button, input[type="button"], input[type="submit"] {
-    color: #17a2b8;
+    color: #FFB6C1;
     background-color: transparent;
     background-image: none;
-    border-color: #17a2b8;
+    border-color: #FFB6C1;
     border-radius: 5px;
 }
