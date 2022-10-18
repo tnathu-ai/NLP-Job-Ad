@@ -1,6 +1,6 @@
 from flask import render_template, request, url_for, flash, redirect, session
-from flaskblog import app
-from flaskblog.forms import RegistrationForm, LoginForm
+from flaskjob import app
+from flaskjob.forms import RegistrationForm, LoginForm
 from gensim.models.fasttext import FastText
 import pandas as pd
 import pickle

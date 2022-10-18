@@ -128,3 +128,10 @@ widgetsnbextension==3.6.1
 wordcloud==1.8.2.2
 xgboost==1.6.1
 zipp==3.8.1
+
+numpy~=1.23.1
+matplotlib~=3.5.1
+scikit-learn~=1.0.2
+flask~=2.2.2
+wtforms~=3.0.1
+beautifulsoup4~=4.11.1

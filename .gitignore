@@ -150,3 +150,8 @@ bbcFT.model
 .model
 
 models/FastText/
+
+# ignore all models
+*.model
+*.npy
+*.pkl
