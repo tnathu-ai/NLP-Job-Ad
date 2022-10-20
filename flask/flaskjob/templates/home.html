@@ -1,11 +1,6 @@
 {% extends "layout.html" %}
-{% block links %}
-<a href="/login">Login</a>
-{% endblock %}
-
 
 {% block body %}
-{% block content %}
 <div id="main">
     <div id="content">
         <div id="category1">
@@ -122,22 +117,22 @@
 
     </div>
 </div>
-{% endblock content %}
 {% endblock %}
 
 {% block script %}
 <script>
+  console.log("HELLO");
   $(document).ready(function (){
 
     $.each([
-    "{{ url_for('job_ad', folder='Accounting_Finance', filename='Job_00232.html') }}",
-    "{{ url_for('job_ad', folder='Accounting_Finance', filename='Job_00232.html') }}",
-    "{{ url_for('job_ad', folder='Engineering', filename='Job_00001.html') }}",
-    "{{ url_for('job_ad', folder='Engineering', filename='Job_00001.html') }}",
-    "{{ url_for('job_ad', folder='Healthcare_Nursing', filename='Job_00423.html') }}",
-    "{{ url_for('job_ad', folder='Healthcare_Nursing', filename='Job_00423.html') }}",
-    "{{ url_for('job_ad', folder='Sales', filename='Job_00621.html') }}",
-    "{{ url_for('job_ad', folder='Sales', filename='Job_00621.html') }}",
+    "{{ url_for('job_ad', folder='Accounting_Finance', filename='Job_00232') }}",
+    "{{ url_for('job_ad', folder='Accounting_Finance', filename='Job_00232') }}",
+    "{{ url_for('job_ad', folder='Engineering', filename='Job_00001') }}",
+    "{{ url_for('job_ad', folder='Engineering', filename='Job_00001') }}",
+    "{{ url_for('job_ad', folder='Healthcare_Nursing', filename='Job_00423') }}",
+    "{{ url_for('job_ad', folder='Healthcare_Nursing', filename='Job_00423') }}",
+    "{{ url_for('job_ad', folder='Sales', filename='Job_00621') }}",
+    "{{ url_for('job_ad', folder='Sales', filename='Job_00621') }}",
     ], function(i, a){
       $.get(a, function(data){
 

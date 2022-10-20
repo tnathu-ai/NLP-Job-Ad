@@ -16,54 +16,126 @@ Explore a Movie review data set, and pre-process the text review corpus. Use the
 ## Repository Structure
 
 ```
+├── Document classification with embeddings.ipynb
 ├── LICENSE
-|
-├── README.md          <- The top-level README for developers using this project
-|
+├── README.md
+├── Task2_3_2.ipynb
+├── Task2_3_2.py
+├── bbcNews.txt
+├── category.txt
+├── count_vectors.txt
 ├── data
-│   ├── Accounting_Finance      
-│   ├── Engineering                 
-│   ├── Healthcare_Nursing          
-│   └── Sales   
-|
-|
+│   ├── Accounting_Finance
+│   │   
+│   ├── Healthcare_Nursing
+│   │  
+│   └── Sales
+│       
+├── description.txt
+├── flask
+│   ├── flaskjob
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-310.pyc
+│   │   │   ├── forms.cpython-310.pyc
+│   │   │   └── routes.cpython-310.pyc
+│   │   ├── descFT_LR.pkl
+│   │   ├── desc_FT.model
+│   │   ├── desc_FT.model.wv.vectors_ngrams.npy
+│   │   ├── errors
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-310.pyc
+│   │   │   │   └── handlers.cpython-310.pyc
+│   │   │   └── handlers.py
+│   │   ├── forms.py
+│   │   ├── routes.py
+│   │   ├── static
+│   │   │   ├── css
+│   │   │   │   └── style.css
+│   │   │   ├── img
+│   │   │   │   ├── logo.ico
+│   │   │   │   └── logo.png
+│   │   │   └── js
+│   │   │       └── jquery-3.6.0.js
+│   │   └── templates
+│   │       ├── Accounting_Finance
+│   │       │   ├── Job_00232.html
+│   │       │   └── Job_00233.html
+│   │       ├── Accounting_Finance.html
+│   │       ├── Engineering
+│   │       │   ├── Job_00001.html
+│   │       │   └── Job_00002.html
+│   │       ├── Engineering.html
+│   │       ├── Healthcare_Nursing
+│   │       │   ├── Job_00423.html
+│   │       │   └── Job_00424.html
+│   │       ├── Healthcare_Nursing.html
+│   │       ├── Sales
+│   │       │   ├── Job_00621.html
+│   │       │   └── Job_00622.html
+│   │       ├── Sales.html
+│   │       ├── about.html
+│   │       ├── admin.html
+│   │       ├── errors
+│   │       │   ├── 403.html
+│   │       │   ├── 404.html
+│   │       │   └── 500.html
+│   │       ├── home.html
+│   │       ├── job_ad_template.html
+│   │       ├── layout.html
+│   │       ├── login.html
+│   │       ├── register.html
+│   │       └── search.html
+│   └── run.py
+├── jobAd_bVector.txt
+├── jobAd_cVector.txt
+├── jobAd_tVector.txt
+├── job_ad.csv
+├── media
+│   └── images
+│       └── td-idf-graphic.png
+├── model.ipynb
+├── model.py
+├── models
+│   ├── FastText
+│   │   ├── fast_Text_model
+│   │   └── fast_Text_model.wv.vectors_ngrams.npy
+│   └── note.txt
+├── notebooks
+│   ├── task1.ipynb
+│   └── task2_3.ipynb
+├── requirements.txt
 ├── saved_txt_files
-│   ├── category.txt      
-│   ├── count_vectors.txt                 
-│   ├── description.txt          
-│   └── vocab.txt   
-| 
-│
-│
-├── models             <- Trained and serialized models, model predictions, or model summaries
-│
-├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering)
-│   ├── Accounting_Finance          <- Data from third party sources.
-│   ├── Engineering                 <- Intermediate data that has been transformed.
-│   ├── Healthcare_Nursing          <- The final, canonical data sets for modeling.
-│   └── Sales                       <- The original, immutable data dump.
-|
-│                         
-│                         
-├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-|
-│
-├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-│                         generated with `pip freeze > requirements.txt`
-│
-|
-├── src                <- Python source code for use in this project.
-│   ├── __init__.py    <- Makes src a Python module
-│   │
-│   ├── src           <- Scripts to download or generate data
-│   │   └── make_dataset.py
-│   │
-│   ├── notebooks       <- Scripts to turn raw data into features for modeling
-│   │   └── task1.py
-|
-|
-|
-|
-│── .gitignore                <- plain text file contains files/directories to ignore
+│   ├── BinaryVectors
+│   │   └── jobAd_bVector.txt
+│   ├── CountVectors
+│   │   └── jobAd_cVector.txt
+│   ├── TfidfVectors
+│   │   └── jobAd_tVector.txt
+│   ├── category.txt
+│   ├── count_vectors.txt
+│   ├── description.txt
+│   ├── title.txt
+│   └── vocab.txt
+├── src
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-310.pyc
+│   │   ├── __init__.cpython-39.pyc
+│   │   ├── utils.cpython-310.pyc
+│   │   └── utils.cpython-39.pyc
+│   └── utils.py
+├── stopwords_en.txt
+├── task1.ipynb
+├── task1.py
+├── task2_3.ipynb
+├── task2_3.py
+├── title.txt
+├── train_model.ipynb
+├── train_model.py
+├── vocab.txt
+└── webindex.txt
+
 
 ```

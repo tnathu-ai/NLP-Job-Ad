@@ -141,17 +141,8 @@ dmypy.json
 .ipynb_checkpoints/
 */.ipynb_checkpoints/*
 
-# large files
-bbcFT.model.wv.vectors_ngrams.npy
-bbcFT.model.wv.vectors.npy
-bbcFT.model
-.model.wv.vectors_ngrams.npy
-.model.wv.vectors.npy
-.model
 
-models/FastText/
-
-# ignore all models
+# ignore all models because of their large size
 *.model
 *.npy
 *.pkl

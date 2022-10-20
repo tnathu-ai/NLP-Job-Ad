@@ -1,13 +1,10 @@
 {% extends "layout.html" %}
 
-{% block links %}
-<a href="/logout">Logout</a>
-{% endblock %} 
 
 {% block body %}
 
 <form action = "/admin" method = "POST">
-    <h2><span>ADD NEWS ENTRY</span></h2>
+    <h2><span>ADD JOB AD ENTRY</span></h2>
     <p>Title:</p>
     <p><input type = "text" name = "title" style="width:100%" value="{{ title }}" required/></p>
     <p>Description:</p>
