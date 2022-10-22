@@ -1,7 +1,6 @@
 # Natural Language Processing Job Advertisement
 Explore a Movie review data set, and pre-process the text review corpus. Use the pre-processed text reviews to generate data features and build a sentiment analysis model to predict sentiment of reviews.
 
-
 ## Project Purpose
 + Pre-process natural language text data to generate effective feature representations;
 + Document and maintain an editable transcript of the data pre-processing pipeline for professional reporting.
@@ -12,6 +11,11 @@ Explore a Movie review data set, and pre-process the text review corpus. Use the
 + The job advertisement text documents of a particular category are in the corresponding sub-folder.
 + Each job advertisement document is a txt file named `Job_<ID>.txt`. It contains the title, the webindex (some will also have information on the company name, some might not), and the full description of the job advertisement.
 
+# Cumulative frequency plot for most common 50 words
+![Cumulative frequency plot for most common 50 words](media/figure/cumulative_frequency.png)
+
+# Word frequency distribution 
+![Cumulative frequency plot for most common 50 words](media/figure/word_frequency.png)
 
 ## Repository Structure
 

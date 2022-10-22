@@ -33,41 +33,31 @@ def gen_docVecs(wv, tk_txts):  # generate vector representation for documents
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html')
+    return render_template('home.html', title='Home')
 
 
 @app.route("/about")
 def about():
     return render_template('about.html', title='About')
 
-
-@app.route("/register", methods=['GET', 'POST'])
-def register():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        flash(f'Account created for {form.email.data}!', 'success')
-        return redirect(url_for('home'))
-    return render_template('register.html', title='Register', form=form)
-
-
 @app.route('/Accounting_Finance')
 def Accounting_Finance():
-    return render_template('Accounting_Finance.html')
+    return render_template('Accounting_Finance.html', title='Accounting_Finance')
 
 
 @app.route('/Engineering')
 def Engineering():
-    return render_template('Engineering.html')
+    return render_template('Engineering.html', title='Engineering')
 
 
 @app.route('/Healthcare_Nursing')
 def Healthcare_Nursing():
-    return render_template('Healthcare_Nursing.html')
+    return render_template('Healthcare_Nursing.html', title='Healthcare_Nursing')
 
 
 @app.route('/Sales')
 def Sales():
-    return render_template('Sales.html')
+    return render_template('Sales.html', title='Sales')
 
 
 @app.route('/<folder>/<filename>')
@@ -120,7 +110,8 @@ def admin():
                 elif cat_recommend not in ['Engineering', 'Accounting Finance', 'Healthcare Nursing', 'Sales']:
                     return render_template('admin.html', prediction=cat_recommend,
                                            title=f_title, description=f_content,
-                                           category_flag='Recommended category must belong to: Engineering, Accounting Finance, Healthcare Nursing, Sales.')
+                                           category_flag='Recommended category must belong to: Engineering, '
+                                                         'Accounting Finance, Healthcare Nursing, Sales.')
 
                 else:
 
@@ -152,11 +143,18 @@ def admin():
                     return redirect('/' + filename.replace('.html', ''))
 
         else:
-            return render_template('admin.html')
+            return render_template('admin.html', title='Admin')
 
     else:
         return redirect('/login')
 
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for {form.email.data}!', 'success')
+        return redirect(url_for('home'))
+    return render_template('register.html', title='Register', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -169,7 +167,7 @@ def login():
                 session['email'] = request.form['email']
                 return redirect('/admin')
             else:
-                return render_template('login.html', login_message='Username or password is invalid.')
+                return render_template('login.html', login_message='Username or password is invalid.', title='Login', form=form)
         else:
             return render_template('login.html', title='Login', form=form)
 

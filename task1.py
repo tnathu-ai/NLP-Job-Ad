@@ -96,7 +96,7 @@ import os
 import warnings
 warnings.filterwarnings('ignore')
 
-# set desired matplotlib gloabal figure size
+# set desired matplotlib global figure size
 plt.rcParams["figure.figsize"] = (20,10)
 
 
@@ -474,7 +474,9 @@ yticks(x, ytks) # annotate x and y axies
 xlabel('Frequency of Frequency') # set x-axis caption
 ylabel('Word Frequency') # set y-axis caption
 grid(True) # make the bar chart grided, easier to view and compare
-
+# save the figure inside the folder `media/figure`
+savefig('media/figure/word_frequency.png', dpi=300, bbox_inches='tight')
+show()
 
 # ### ------------> OBSERVATION:
 # 
@@ -568,6 +570,9 @@ top50MostFreqWords
 
 # cumulative frequency plot for most common 50 words
 doc_fd.plot(50, cumulative=True, color='pink')
+# save the figure inside the folder `media/figure`
+savefig('media/figure/cumulative_frequency.png', dpi=300, bbox_inches='tight')
+show()
 
 
 # ### -----------> OBSERVATION:
@@ -681,6 +686,18 @@ titleFilename = "title.txt"
 save_title(titleFilename,title)
 print(f'Successfully saved title into {titleFilename}')
 
+# save vocabulary into txt file inside the directo 'saved_txt_files/data/'
+vocabularyFilename = "saved_txt_files/data/vocabulary.txt"
+save_vocabulary(vocabularyFilename,vocabulary)
+print(f'Successfully saved vocabulary into {vocabularyFilename}')
+
+# create a directory to save the data
+if not os.path.exists('saved_txt_files/data/'):
+    os.makedirs('saved_txt_files/data/')
+# save bigrams into txt file inside the directo 'saved_txt_files/data/'
+bigramsFilename = "saved_txt_files/data/bigrams.txt"
+save_bigrams(bigramsFilename,bigrams)
+print(f'Successfully saved bigrams into {bigramsFilename}')
 
 # #### `.csv` file
 # * `job_ad.csv`: store information into a Dataframe and save into a CSV file
