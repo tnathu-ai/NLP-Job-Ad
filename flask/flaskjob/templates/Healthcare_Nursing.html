@@ -8,18 +8,28 @@
 <div id="main">
     <div id="content">
         <div id="category">
-            <div>
-                <h3><a id="link-1" href="#"> </a></h3>
-                <p id="data-embed-1"> </p>
+            <div class="media content-section">
+                <div class="media-body">
+                    <div class="job-metadata">
+                        <a class="mr-2" href="#">Company</a>
+                        <small class="text-muted">Company</small>
+                    </div>
+                    <h2><a id="link-1" class="job-title" href="#"> </a></h2>
+                    <p id="data-embed-1" class="job-content"> </p>
+                </div>
             </div>
 
-            <div>
-                <h3><a id="link-2" href="#"> </a></h3>
-                <p id="data-embed-2"> </p>
+            <div class="media content-section">
+                <div class="media-body">
+                    <div class="job-metadata">
+                        <a class="mr-2" href="#">Company</a>
+                        <small class="text-muted">Company</small>
+                    </div>
+                    <h2><a id="link-2" class="job-title" href="#"> </a></h2>
+                    <p id="data-embed-2" class="job-content"> </p>
+                </div>
             </div>
-
         </div>
-
     </div>
 </div>
 {% endblock %}
@@ -29,8 +39,8 @@
   $(document).ready(function (){
 
     $.each([
-    "{{ url_for('job_ad', folder='Healthcare_Nursing', filename='Job_00423.html') }}",
-    "{{ url_for('job_ad', folder='Healthcare_Nursing', filename='Job_00423.html') }}",
+    "{{ url_for('job_ad', folder='Healthcare_Nursing', filename='Job_00423') }}",
+    "{{ url_for('job_ad', folder='Healthcare_Nursing', filename='Job_00424') }}",
     ], function(i, a){
       $.get(a, function(data){
 

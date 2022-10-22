@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
-{% block content %}
+{% block body %}
     <div class="content-section">
-        <form method="POST" action="">
+        <form method="POST" action="/login">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Log In</legend>
-                <div class="form-group" name = "username">
+                <div class="form-group" name = "email">
                     {{ form.email.label(class="form-control-label") }}
                     {% if form.email.errors %}
                         {{ form.email(class="form-control form-control-lg is-invalid") }}
@@ -49,4 +49,4 @@
             Need An Account? <a class="ml-2" href="{{ url_for('register') }}">Sign Up Now</a>
         </small>
     </div>
-{% endblock content %}
+{% endblock %}

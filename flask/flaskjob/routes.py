@@ -7,19 +7,6 @@ import pickle
 import os
 from bs4 import BeautifulSoup
 
-posts = [
-    {
-        'Title': 'Assembly/Production Technicians Milton Keynes',
-        'Company': 'Newstaff Employment Services Ltd',
-        'Description': 'Main Purpose of Job:To perform a range of mechanical assembly, hydraulic installation and electrical wiring manufacturing / production operations to the required quality standard, within cost targets. Main Tasks Of Job: Efficient and correct to specification Mechanical assembly, hydraulic installation, electrical wiring, and fabrication / fitting operations, linked to the manufacture, service and repair of access platforms. Competent build inspection of all stages and materials used. Full compliance with ISO 9001 procedures, and total quality focus throughout all direct / indirect stages of manufacturing process to achieve a quality product aligned to the customers specification / expectations. Effective and efficient value added organisation and control of all allocated operations. Full flexibility, including being training and training others to enable all manufacturing operations by all to be completed across the company. Compliance with health and safety standards, flexibility, and development of skills through the complete manufacturing process, and the production / product cells. Maintaining and developing accurate systems and procedures. Ensuring engineering masters and works orders accurately reflect the approved parts consumed. Identification of low stock / shortages. Maintain a high standard of **** s workplace organisation. Continuous improvement / elimination of waste, through Lean Manufacturing techniques / tools . Working as a team to achieve customer quality, delivery, cost and innovation requirements. Striving to meet performance requirements for accidents / incidents, internal quality defects,cell productivity / utilisation, overall stock accuracy and WIP (flow lineadherence). Ensuring company procedures are complied with. Qualifications And Experience: Ideally City and Guilds formal mechanical or electrical assembly qualification,although stable and proven experience in a previous mechanical / electrical role will be considered where formal qualifications do not exist. Proven and communicated hands on experience and skills in the manufacturing practices of medium to heavy engineering assembly, hydraulic installation and basic wiring. Able to achieve strict quality standards and specifications. Team player, with full flexibility and availability for regular overtime working (where business demand requires) and performance of skilled and un skilled roles / tasks. Ability to work under pressure and to meet deadlines. Remuneration: The above role offers a competitive wage rate, business performance bonus, healthcare scheme, contributory pension, life insurance and holiday allowance scheme',
-    },
-    {
-        'Title': 'Assembly/Production Technicians Milton Keynes',
-        'Company': 'Newstaff Employment Services Ltd',
-        'Description': 'Main Purpose of Job:To perform a range of mechanical assembly, hydraulic installation and electrical wiring manufacturing / production operations to the required quality standard, within cost targets. Main Tasks Of Job: Efficient and correct to specification Mechanical assembly, hydraulic installation, electrical wiring, and fabrication / fitting operations, linked to the manufacture, service and repair of access platforms. Competent build inspection of all stages and materials used. Full compliance with ISO 9001 procedures, and total quality focus throughout all direct / indirect stages of manufacturing process to achieve a quality product aligned to the customers specification / expectations. Effective and efficient value added organisation and control of all allocated operations. Full flexibility, including being training and training others to enable all manufacturing operations by all to be completed across the company. Compliance with health and safety standards, flexibility, and development of skills through the complete manufacturing process, and the production / product cells. Maintaining and developing accurate systems and procedures. Ensuring engineering masters and works orders accurately reflect the approved parts consumed. Identification of low stock / shortages. Maintain a high standard of **** s workplace organisation. Continuous improvement / elimination of waste, through Lean Manufacturing techniques / tools . Working as a team to achieve customer quality, delivery, cost and innovation requirements. Striving to meet performance requirements for accidents / incidents, internal quality defects,cell productivity / utilisation, overall stock accuracy and WIP (flow lineadherence). Ensuring company procedures are complied with. Qualifications And Experience: Ideally City and Guilds formal mechanical or electrical assembly qualification,although stable and proven experience in a previous mechanical / electrical role will be considered where formal qualifications do not exist. Proven and communicated hands on experience and skills in the manufacturing practices of medium to heavy engineering assembly, hydraulic installation and basic wiring. Able to achieve strict quality standards and specifications. Team player, with full flexibility and availability for regular overtime working (where business demand requires) and performance of skilled and un skilled roles / tasks. Ability to work under pressure and to meet deadlines. Remuneration: The above role offers a competitive wage rate, business performance bonus, healthcare scheme, contributory pension, life insurance and holiday allowance scheme',
-    }
-]
-
 
 def gen_docVecs(wv, tk_txts):  # generate vector representation for documents
     docs_vectors = pd.DataFrame()  # creating empty final dataframe
@@ -46,7 +33,7 @@ def gen_docVecs(wv, tk_txts):  # generate vector representation for documents
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html', posts=posts)
+    return render_template('home.html')
 
 
 @app.route("/about")
@@ -58,7 +45,7 @@ def about():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
+        flash(f'Account created for {form.email.data}!', 'success')
         return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
 
@@ -90,7 +77,7 @@ def job_ad(folder, filename):
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    if 'username' in session:
+    if 'email' in session:
         if request.method == 'POST':
 
             # Read the content
@@ -174,22 +161,22 @@ def admin():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if 'username' in session:
-        return redirect(url_for('admin'))
+    if 'email' in session:
+        return redirect('/admin')
     else:
-        if form.validate_on_submit():
-            if form.email.data == 'ngocanhthu20102002@gmail.com' and form.password.data == 'tnathu-ai':
-                flash('You have been logged in!', 'Success')
-                return redirect(url_for('admin'))
+        if request.method == 'POST':
+            if (request.form['email'] == 'COSC2820') and (request.form['password'] == 'Testing'):
+                session['email'] = request.form['email']
+                return redirect('/admin')
             else:
-                flash('Login Unsuccessful. Invalid username or password', 'danger')
-        return render_template('login.html', title='Login', form=form)
+                return render_template('login.html', login_message='Username or password is invalid.')
+        else:
+            return render_template('login.html', title='Login', form=form)
 
 
 @app.route('/logout')
 def logout():
-    # remove the username from the session if it is there
-    session.pop('username', None)
+    # remove the email from the session if it is there
+    session.pop('email', None)
 
     return redirect('/')
-
