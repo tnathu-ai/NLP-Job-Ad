@@ -87,19 +87,19 @@ def admin():
             # Classify the content
             if request.form['button'] == 'Classify':
 
-                # Tokenize the content of the .txt file so as to input to the saved model
+                # Tokenize the content of the .txt file to input to the saved model
                 # Here, as an example,  we just do a very simple tokenization
                 tokenized_data = f_content.split(' ')
 
                 # Load the FastText model
-                bbcFT = FastText.load("bbcFT.model")
+                bbcFT = FastText.load("desc_FT.model")
                 bbcFT_wv = bbcFT.wv
 
                 # Generate vector representation of the tokenized data
                 bbcFT_dvs = gen_docVecs(bbcFT_wv, [tokenized_data])
 
                 # Load the LR model
-                pkl_filename = "bbcFT_LR.pkl"
+                pkl_filename = "descFT_LR.pkl"
                 with open(pkl_filename, 'rb') as file:
                     model = pickle.load(file)
 
@@ -117,10 +117,10 @@ def admin():
                                            title=f_title, description=f_content,
                                            category_flag='Recommended category must not be empty.')
 
-                elif cat_recommend not in ['Engineering', 'Accounting_Finance', 'Healthcare_Nursing', 'Sales']:
+                elif cat_recommend not in ['Engineering', 'Accounting Finance', 'Healthcare Nursing', 'Sales']:
                     return render_template('admin.html', prediction=cat_recommend,
                                            title=f_title, description=f_content,
-                                           category_flag='Recommended category must belong to: Engineering, Accounting_Finance, Healthcare_Nursing, Sales.')
+                                           category_flag='Recommended category must belong to: Engineering, Accounting Finance, Healthcare Nursing, Sales.')
 
                 else:
 
@@ -165,7 +165,7 @@ def login():
         return redirect('/admin')
     else:
         if request.method == 'POST':
-            if (request.form['email'] == 'COSC2820') and (request.form['password'] == 'Testing'):
+            if (request.form['email'] == 'cat@gmail.com') and (request.form['password'] == 'tnathu-ai'):
                 session['email'] = request.form['email']
                 return redirect('/admin')
             else:
