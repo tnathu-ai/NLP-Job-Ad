@@ -53,7 +53,7 @@
 
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
-              <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
+              <a class="nav-item nav-link" href="{{ url_for('login') }}">{% block links %}       {% endblock %}</a>
               <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
             </div>
           </div>
@@ -83,7 +83,6 @@
                 <li class="list-group-item list-group-item-light">Latest Jobs</li>
                 <li class="list-group-item list-group-item-light">Popular Jobs</li>
                 <li class="list-group-item list-group-item-light">Recommended Jobs</li>
-                <li class="list-group-item list-group-item-light">etc</li>
               </ul>
             </p>
           </div>

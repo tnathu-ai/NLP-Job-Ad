@@ -1,10 +1,18 @@
 {% extends "layout.html" %}
 
+{% block links %}
+<div class="navbar-nav">
+    <a class="nav-item nav-link" href="/login">Login</a>
+</div>
+{% endblock %}
+
 {% block body %}
 <div id="main">
     <div id="content">
+        <!--embed gif -->
+        <img src="{{ url_for('static', filename='gif/JobSearch.gif') }}" alt="500" width="480" height="270">
         <div id="category1">
-            <h2><span>Accounting Finance</span></h2>
+            <h1><span>Accounting Finance</span></h1>
             <div class="media content-section">
                 <div class="media-body">
                     <div class="job-metadata">
@@ -31,7 +39,7 @@
 
 
         <div id="category2">
-            <h2><span>Engineering</span></h2>
+            <h1><span>Engineering</span></h1>
 
             <div class="media content-section">
                 <div class="media-body">
@@ -58,7 +66,7 @@
         </div>
 
         <div id="category3">
-            <h2><span>Healthcare Nursing</span></h2>
+            <h1><span>Healthcare Nursing</span></h1>
 
             <div class="media content-section">
                 <div class="media-body">
@@ -86,7 +94,7 @@
         </div>
 
         <div id="category4">
-            <h2><span>Sales</span></h2>
+            <h1><span>Sales</span></h1>
 
             <div class="media content-section">
                 <div class="media-body">
@@ -122,17 +130,19 @@
 {% block script %}
 <script>
   console.log("HELLO");
+
+
   $(document).ready(function (){
 
     $.each([
     "{{ url_for('job_ad', folder='Accounting_Finance', filename='Job_00232') }}",
-    "{{ url_for('job_ad', folder='Accounting_Finance', filename='Job_00232') }}",
+    "{{ url_for('job_ad', folder='Accounting_Finance', filename='Job_00233') }}",
     "{{ url_for('job_ad', folder='Engineering', filename='Job_00001') }}",
-    "{{ url_for('job_ad', folder='Engineering', filename='Job_00001') }}",
+    "{{ url_for('job_ad', folder='Engineering', filename='Job_00002') }}",
     "{{ url_for('job_ad', folder='Healthcare_Nursing', filename='Job_00423') }}",
-    "{{ url_for('job_ad', folder='Healthcare_Nursing', filename='Job_00423') }}",
+    "{{ url_for('job_ad', folder='Healthcare_Nursing', filename='Job_00424') }}",
     "{{ url_for('job_ad', folder='Sales', filename='Job_00621') }}",
-    "{{ url_for('job_ad', folder='Sales', filename='Job_00621') }}",
+    "{{ url_for('job_ad', folder='Sales', filename='Job_00622') }}",
     ], function(i, a){
       $.get(a, function(data){
 
@@ -146,5 +156,8 @@
       $("#link-" + String(i+1)).attr("href", a)
     });
   });
+
+
+
 </script>
 {% endblock %}

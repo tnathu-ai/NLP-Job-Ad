@@ -40,6 +40,7 @@ def home():
 def about():
     return render_template('about.html', title='About')
 
+
 @app.route('/Accounting_Finance')
 def Accounting_Finance():
     return render_template('Accounting_Finance.html', title='Accounting_Finance')
@@ -107,16 +108,20 @@ def admin():
                                            title=f_title, description=f_content,
                                            category_flag='Recommended category must not be empty.')
 
-                elif cat_recommend not in ['Engineering', 'Accounting Finance', 'Healthcare Nursing', 'Sales']:
+                elif cat_recommend not in ['Engineering', 'Accounting_Finance', 'Healthcare_Nursing', 'Sales']:
                     return render_template('admin.html', prediction=cat_recommend,
                                            title=f_title, description=f_content,
                                            category_flag='Recommended category must belong to: Engineering, '
-                                                         'Accounting Finance, Healthcare Nursing, Sales.')
+                                                         'Accounting_Finance, Healthcare_Nursing, Sales.')
 
                 else:
 
                     # First read the html template
-                    soup = BeautifulSoup(open('templates/job_ad_template.html'), 'html.parser')
+                    import os
+                    cwd = os.getcwd()  # Get the current working directory (cwd)
+                    files = os.listdir(cwd)  # Get all the files in that directory
+                    print("Files in %r: %s" % (cwd, files))
+                    soup = BeautifulSoup(open('flaskjob/templates/job_template.html'), 'html.parser')
 
                     # Then adding the title and the content to the template
                     # First, add the title
@@ -135,7 +140,7 @@ def admin():
                     filename_list = f_title.split()
                     filename = '_'.join(filename_list)
                     filename = cat_recommend + '/' + filename + ".html"
-                    with open("templates/" + filename, "w", encoding='utf-8') as file:
+                    with open("flaskjob/templates/" + filename, "w", encoding='utf-8') as file:
                         print(filename)
                         file.write(str(soup))
 
@@ -143,10 +148,50 @@ def admin():
                     return redirect('/' + filename.replace('.html', ''))
 
         else:
-            return render_template('admin.html', title='Admin')
+            return render_template('admin.html')
 
     else:
         return redirect('/login')
+
+
+
+@app.route('/search', methods = ['POST', 'GET'])
+def search():
+
+    if request.method == 'POST' or request.method == 'GET':
+
+        if request.form['search'] == 'Search':
+            search_string = request.form["searchword"]
+
+            # search over all the html files in templates to find the search_string
+            article_search = []
+            dir_path = 'flaskjob/templates'
+            for folder in os.listdir(dir_path):
+                if os.path.isdir(os.path.join(dir_path, folder)):
+                    for filename in sorted(os.listdir(os.path.join(dir_path, folder))):
+                        if filename.endswith('html'):
+                            with open(os.path.join(dir_path, folder, filename), encoding="utf8") as file:
+                                file_content = file.read()
+
+                                # search for the string within the file
+                                if search_string in file_content:
+                                    article_search.append([folder, filename.replace('.html', '')])
+
+            # generate the right format for the Jquery script in search.html
+            num_results = len(article_search)
+
+            # exact search or related search (regex, stemming or lemmatizing)
+
+            # can handle the case when no search results
+
+            # search both titles and descriptions
+
+            return render_template('search.html', num_results=num_results, search_string=search_string,
+                                   article_search=article_search)
+
+    else:
+        return render_template('home.html')
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -155,6 +200,7 @@ def register():
         flash(f'Account created for {form.email.data}!', 'success')
         return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -167,7 +213,8 @@ def login():
                 session['email'] = request.form['email']
                 return redirect('/admin')
             else:
-                return render_template('login.html', login_message='Username or password is invalid.', title='Login', form=form)
+                return render_template('login.html', login_message='Username or password is invalid.', title='Login',
+                                       form=form)
         else:
             return render_template('login.html', title='Login', form=form)
 

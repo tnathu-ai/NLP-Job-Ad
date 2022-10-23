@@ -1,7 +1,16 @@
 {% extends "layout.html" %}
-{% block content %}
+
+{% block links %}
+<div class="navbar-nav">
+    <a class="nav-item nav-link" href="/login">Login</a>
+</div>
+{% endblock %}
+
+{% block body %}
     <div class="content-section">
         <h1>Something went wrong (500)</h1>
         <p>We're experiencing some trouble on our end. Please try again in the near future</p>
+        <!--embed gif -->
+        <img src="{{ url_for('static', filename='gif/500.gif') }}" alt="500" width="500" height="500">
     </div>
-{% endblock content %}
+{% endblock %}

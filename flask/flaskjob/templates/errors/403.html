@@ -1,7 +1,18 @@
 {% extends "layout.html" %}
-{% block content %}
+
+{% block links %}
+<div class="navbar-nav">
+    <a class="nav-item nav-link" href="/login">Login</a>
+</div>
+{% endblock %}
+
+
+{% block body %}
     <div class="content-section">
         <h1>You don't have permission to do that (403)</h1>
         <p>Please check your account and try again</p>
+
+        <!--embed gif -->
+        <img src="{{ url_for('static', filename='gif/403.gif') }}" alt="403" width="500" height="500">
     </div>
-{% endblock content %}
+{% endblock %}

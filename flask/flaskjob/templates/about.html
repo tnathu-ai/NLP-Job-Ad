@@ -1,5 +1,17 @@
 {% extends "layout.html" %}
-{% block content %}
+
+{% block links %}
+<div class="navbar-nav">
+    <a class="nav-item nav-link" href="/login">Login</a>
+</div>
+{% endblock %}
+
+{% block body %}
     <h1>About Page</h1>
-    <p>tnathu-ai</p>
-{% endblock content %}
+    <p>JobSearch is a web app that allows you to search and categorize jobs using NLP.</p>
+<!--About the author-->
+    <h2>About the author</h2>
+<!--Embed image-->
+    <img src="{{ url_for('static', filename='img/cat.jpg') }}" alt="author" width="500" height="500">
+    <p><a  href="https://github.com/tnathu-ai">tnathu-ai</a></p>
+{% endblock %}
