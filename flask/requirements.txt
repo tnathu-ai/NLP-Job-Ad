@@ -84,7 +84,7 @@ mkl-service==2.4.0
 munkres==1.1.4
 nbclassic @ file:///opt/conda/conda-bld/nbclassic_1644943264176/work
 nbclient==0.6.6
-nbconvert==6.5.0
+nbconvert==6.5.1
 nbformat==5.4.0
 nest-asyncio @ file:///opt/concourse/worker/volumes/live/4c28d7d6-d544-4f26-7811-eac0cb2a490e/volume/nest-asyncio_1649847935212/work
 nltk==3.7
