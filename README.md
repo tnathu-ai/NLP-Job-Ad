@@ -2,7 +2,7 @@
 Explore a Movie review data set, and pre-process the text review corpus. Use the pre-processed text reviews to generate data features and build a sentiment analysis model to predict sentiment of reviews.
 
 <p align="center">
-  <a href="https://youtu.be/nFVLoW-K7UQ" target="_blank">Demo on YouTube <i class="fa-brands fa-youtube"></i></a>
+<a href="https://youtu.be/nFVLoW-K7UQ" target="blank">Demo on YouTube <img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/youtube.svg" alt="tnathu-ai" height="30" width="40" /></a> 
 </p>
 
 ## Project Purpose
