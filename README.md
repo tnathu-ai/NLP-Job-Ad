@@ -1,6 +1,10 @@
 # Natural Language Processing Job Advertisement
 Explore a Movie review data set, and pre-process the text review corpus. Use the pre-processed text reviews to generate data features and build a sentiment analysis model to predict sentiment of reviews.
 
+<p align="center">
+  <a href="https://youtu.be/nFVLoW-K7UQ" target="_blank">Demo on YouTube <i class="fa-brands fa-youtube"></i></a>
+</p>
+
 ## Project Purpose
 + Pre-process natural language text data to generate effective feature representations;
 + Document and maintain an editable transcript of the data pre-processing pipeline for professional reporting.
