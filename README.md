@@ -5,8 +5,10 @@ Explore a Movie review data set, and pre-process the text review corpus. Use the
 <a href="https://youtu.be/nFVLoW-K7UQ" target="blank">Demo on YouTube Flask Application<img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/youtube.svg" alt="tnathu-ai" height="30" width="40" /></a> 
 </p>
 
-<img src="flask/flaskjob/static/gif/JobSearch.gif" width="500" align="center">
 
+<p align="center">
+<img src="flask/flaskjob/static/gif/JobSearch.gif" width="500" align="center">
+</p>
 
 ## Project Purpose
 + Pre-process natural language text data to generate effective feature representations;
