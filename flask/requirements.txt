@@ -38,7 +38,7 @@ et-xmlfile==1.1.0
 executing==0.9.0
 fast-ml==3.68
 fastjsonschema @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_b5c1gee32t/croots/recipe/python-fastjsonschema_1661368622875/work
-Flask==2.2.2
+Flask==2.2.5
 Flask-Bcrypt==1.0.1
 Flask-Compress @ file:///tmp/build/80754af9/flask-compress_1623922802283/work
 Flask-Login==0.6.2
